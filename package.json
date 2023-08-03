@@ -16,5 +16,8 @@
     "express-rate-limit": "6.8.1",
     "mongodb": "5.7.0",
     "nodemon": "3.0.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2"
   }
 }
