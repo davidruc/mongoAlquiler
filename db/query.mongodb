@@ -1,32 +1,48 @@
 use("db_campus_alquiler");
-db.sucursal.insertMany([
+db.createCollection("sucursal", {
+    validator:{
+        $jsonSchema: {
+            bsonType: "object",
+            title: "Sucursales",
+            required: [
+                "_id","ID_Sucursal", "Nombre", "Direccion", "Telefono"
+            ],
+            properties: {
+                ID_Sucursal: {
+                    "bsonType": "int",
+                    "maximum": 9999,
+                    "minimum": 0
+                },
+                Nombre: {
+                    "bsonType": "string",
+                    "maxLength": 58,
+                    "minLength": 1,
+                    "pattern": "/^[A-Za-zÁÉÍÓÚÜÑñÅå\s#°\/\-]+$/u"
+                },
+                Direccion: {
+                    "bsonType": "string",
+                    "pattern": "/^[A-Za-zÁÉÍÓÚÜÑñÅå\s#°\/\-]+$/u"
+                },
+                Telefono: {
+                    "bsonType": "int",
+                    "maximum": 9999999999,
+                    "minimum": 1000000000
+                }
+            }
+        }
+    }
+})
+
+
+
+use("db_campus_alquiler");
+db.sucursal.insertOne([
     {
         _id: 1,
         ID_Sucursal:1,
-        Nombre:"Bucaramanga",
-        Direccion:"calla 11 cr.32",
-        Telefono:"3224757534"
-    },
-    {
-        _id: 2,
-        ID_Sucursal:2,
-        Nombre:"Medellin",
-        Direccion:"calla 11 cr.32",
-        Telefono:"3588654216"
-    },
-    {
-        _id: 3,
-        ID_Sucursal:3,
-        Nombre:"Bogota",
-        Direccion:"calla 11 cr.32",
-        Telefono:"3215489586"
-    },
-    {
-        _id: 4,
-        ID_Sucursal:4,
-        Nombre:"Barranca",
-        Direccion:"calla 11 cr.32",
-        Telefono:"3156589574"
+        Nombre: "Bucaramanga",
+        Direccion: "calla 11 cr32",
+        Telefono: 3224757534
     }
 ]);
 
