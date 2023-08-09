@@ -1,51 +1,407 @@
+/* CREACIÓN BASE DE DATOS */
 use("db_campus_alquiler");
 db.createCollection("sucursal", {
+    capped: true,
+    size: 1102,
+    max: 6,
     validator:{
         $jsonSchema: {
             bsonType: "object",
-            title: "Sucursales",
             required: [
-                "_id","ID_Sucursal", "Nombre", "Direccion", "Telefono"
+                "ID_Sucursal", "Nombre", "Direccion", "Telefono"
             ],
             properties: {
                 ID_Sucursal: {
                     "bsonType": "int",
-                    "maximum": 9999,
-                    "minimum": 0
+                    "minimum": 0,
+                    "maximum": 20,
                 },
                 Nombre: {
                     "bsonType": "string",
                     "maxLength": 58,
                     "minLength": 1,
-                    "pattern": "/^[A-Za-zÁÉÍÓÚÜÑñÅå\s#°\/\-]+$/u"
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
                 },
                 Direccion: {
                     "bsonType": "string",
-                    "pattern": "/^[A-Za-zÁÉÍÓÚÜÑñÅå\s#°\/\-]+$/u"
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ,.#@\\s-]+$",
                 },
                 Telefono: {
-                    "bsonType": "int",
-                    "maximum": 9999999999,
-                    "minimum": 1000000000
+                    "bsonType": "number",
+                    "minimum": 3000000000,
+                    "maximum": 4000000000,
                 }
             }
         }
     }
 })
-
-
-
-use("db_campus_alquiler");
-db.sucursal.insertOne([
-    {
-        _id: 1,
-        ID_Sucursal:1,
-        Nombre: "Bucaramanga",
-        Direccion: "calla 11 cr32",
-        Telefono: 3224757534
+db.createCollection("automovil", {
+    capped: true,
+    size: 1600,
+    max: 10,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: [ "ID_Automovil", "Marca", "Modelo", "Anio", "Tipo", "Capacidad", "Precio_Diario" ],
+            properties: {
+                ID_Automovil: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                }, Marca: {
+                    "bsonType": "string",
+                    "maxLength": 85,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
+                }, Modelo:{
+                    "bsonType": "string",
+                    "maxLength": 25,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
+                }, Anio:{
+                    "bsonType": "int",
+                    "minimum": 1885,
+                    "maximum": 2024,
+                }, Tipo: {
+                    "bsonType": "string",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
+                }, Capacidad: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 40,
+                }, Precio_Diario: {
+                    "bsonType": "int",
+                    "minimum": 50000,
+                    "maximum": 400000,
+                }
+            }
+        }
     }
-]);
+})
+db.createCollection("sucursal_automovil", {
+    capped: true,
+    size: 1000,
+    max: 10,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: [ "ID_Sucursal_id", "ID_Automovil_id", "Cantidad_Disponible"],
+            properties: {
+                ID_Sucursal_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Automovil_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                Cantidad_Disponible: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 40,
+                }
 
+            }
+        }
+    }
+})
+db.createCollection("reserva", {
+    capped: true,
+    size: 20000,
+    max: 100,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: [ "ID_Reserva", "ID_Cliente_id", "ID_Automovil_id", "Fecha_Reserva", "Fecha_Inicio", "Fecha_Fin", "Estado"],
+            properties: {
+                ID_Reserva: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Cliente_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Automovil_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                Fecha_Reserva: {
+                    bsonType: "date",
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato date",
+                },
+                Fecha_Inicio: {
+                    bsonType: "date",
+                    description: "Debe informar el campo Fecha_Inicio y este debe ser un dato date",
+                },
+                Fecha_Fin: {
+                    bsonType: "date",
+                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                },
+                Estado: {
+                    bsonType: "string",
+                    "maxLength": 30,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
+                }
+            }
+        }
+    }
+})
+db.createCollection("cliente", {
+    capped: true,
+    size: 16000,
+    max: 100,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: [ "ID_Cliente", "Nombre", "Apellido", "DNI", "Direccion", "Telefono"],
+            properties: {
+                ID_Cliente: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                Nombre: {
+                    bsonType: "string",
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                },
+                Apellido: {
+                    bsonType: "string",
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                },
+                DNI: {
+                    "bsonType": "number",
+                    "minimum": 10000000,
+                    "maximum": 10000000000,
+                },
+                Direccion: {
+                    "bsonType": "string",
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ,.#@\\s-]+$",
+                },
+                Telefono: {
+                    "bsonType": "number",
+                    "minimum": 3000000000,
+                    "maximum": 4000000000,
+                },
+                Email: {
+                    "bsonType": "string",
+                    "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                }
+            }
+        }
+    }
+});
+db.createCollection("alquiler", {
+    capped: true,
+    size: 16000,
+    max: 100,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: [ "ID_Alquiler", "ID_Cliente_id", "ID_Automovil_id", "Fecha_Inicio", "Fecha_Fin", "Costo_Total", "Estado"],
+            properties: {
+                ID_Alquiler: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Cliente_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Automovil_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                Fecha_Inicio: {
+                    bsonType: "date",
+                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                },
+                Fecha_Fin: {
+                    bsonType: "date",
+                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                },
+                Costo_Total: {
+                    "bsonType": "number",
+                    "minimum": 50000,
+                    "maximum": 41000000,
+                },
+                Estado: {
+                    bsonType: "string",
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                }
+            }
+        }
+    }
+});
+db.createCollection("registro_devolucion", {
+    capped: true,
+    size: 8000,
+    max: 50,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: [ "ID_Registro", "ID_Alquiler_id", "ID_Empleado_id", "Fecha_Devolucion", "Combustible_Devuelto", "Kilometraje_Devuelto"],
+            properties: {
+                ID_Registro: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Alquiler_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Empleado_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                Fecha_Devolucion: {
+                    bsonType: "date",
+                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                },
+                Combustible_Devuelto: {
+                    "bsonType": "int",
+                    "minimum": 1,
+                    "maximum": 20,
+                },
+                Monto_Adicional: {
+                    "bsonType": "number",
+                    "minimum": 1000,
+                    "maximum": 41000000,
+                },
+                Kilometraje_Devuelto: {
+                    "bsonType": "number",
+                    "minimum": 1,
+                    "maximum": 100000,
+                }
+            }
+        }
+    }
+});
+db.createCollection("resgistro_entrega", {
+    capped: true,
+    size: 8000,
+    max: 50,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            require: ["ID_Registro", "ID_Alquiler_id" ,"ID_Empleado_id" ,"Fecha_Entrega" ,"Combustible_Entregado","Kilometraje_Entregado"],
+            properties: {
+                ID_Registro: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Alquiler_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                ID_Empleado_id: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                Fecha_Entrega: {
+                    bsonType: "date",
+                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                },
+                Combustible_Entregado: {
+                    "bsonType": "int",
+                    "minimum": 1,
+                    "maximum": 20,
+                },
+                Kilometraje_Entregado: {
+                    "bsonType": "number",
+                    "minimum": 1,
+                    "maximum": 100000,
+                }
+            }
+        }
+    }
+});
+db.createCollection("empleado", {
+    capped: true,
+    size: 16000,
+    max: 100,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: [ "ID_Empleado", "Nombre", "Apellido", "DNI", "Direccion", "Telefono", "Cargo"],
+            properties: {
+                ID_Empleado: {
+                    "bsonType": "int",
+                    "minimum": 0,
+                    "maximum": 100,
+                },
+                Nombre: {
+                    bsonType: "string", 
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                },
+                Apellido: {
+                    bsonType: "string", 
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                },
+                DNI: {
+                    "bsonType": "number",
+                    "minimum": 10000000,
+                    "maximum": 10000000000,
+                },
+                Direccion: {
+                    "bsonType": "string",
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ,.#@\\s-]+$",
+                },
+                Telefono: {
+                    "bsonType": "number",
+                    "minimum": 3000000000,
+                    "maximum": 4000000000,
+                },
+                Cargo: {
+                    "bsonType": "string",
+                    "maxLength": 80,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
+                }
+            }
+        }
+    }
+});
+
+
+
+/* insertar datos de prueba */
+use("db_campus_alquiler");
+db.sucursal.insertOne(
+    {
+        ID_Sucursal: 1,
+        Nombre: "qerwerwerew",
+        Direccion: "calle 15# 21",
+        Telefono: 3185767865,
+    }
+);
 db.automovil.insertMany([
     {
         _id: 1,
@@ -56,16 +412,6 @@ db.automovil.insertMany([
         Tipo:"Automovil",
         Capacidad: 4,
         Precio_Diario:140000
-    },
-    {
-        _id: 2,
-        ID_Automovil: 2,
-        Marca: "Mazda",
-        Modelo: "Mazda 2",
-        Anio: 2015,
-        Tipo:"Automovil",
-        Capacidad: 4,
-        Precio_Diario:80000
     },
     {
         _id: 3,
@@ -98,14 +444,7 @@ db.automovil.insertMany([
         Precio_Diario:130000
     }
 ]);
-
 db.sucursal_automovil.insertMany([
-    {
-        _id: 1,
-        ID_Sucursal_id: 1,
-        ID_Automovil_id: 1,
-        Cantidad_Disponible:5
-    },
     {
         _id: 2,
         ID_Sucursal_id: 2,
@@ -131,18 +470,7 @@ db.sucursal_automovil.insertMany([
         Cantidad_Disponible:4
     }
 ]);
-
 db.reserva.insertMany([
-    {
-        _id: 1,
-        ID_Reserva: 1,
-        ID_Cliente_id: 1,
-        ID_Automovil_id: 1,
-        Fecha_Reserva: "2023-07-15",
-        Fecha_Inicio: "2024-01-15",
-        Fecha_Fin: "2024-01-20",
-        Estado: "Confirmado"
-    },
     {
         _id: 2,
         ID_Reserva: 2,
@@ -194,18 +522,8 @@ db.reserva.insertMany([
         Estado: "Apartado"
     }
 ]);
-
 db.cliente.insertMany([
-    {
-        _id: 1,
-        ID_Cliente: 1,
-        Nombre: "cliente 1",
-        Apellido:"apellido ",
-        DNI:"125356895",
-        Direccion:"Calle 11",
-        Telefono:"3235866595",
-        Email:"correo@gmail.com"
-    },
+    
     {
         _id: 2,
         ID_Cliente: 2,
@@ -257,18 +575,8 @@ db.cliente.insertMany([
         Email:"correo@gmail.com"
     }
 ]);
-
 db.alquiler.insertMany([
-    {
-        _id: 1,
-        ID_Alquiler: 1,
-        ID_Cliente_id: 1,
-        ID_Automovil_id: 1,
-        Fecha_Inicio: "2023-07-05",
-        Fecha_Fin: "2023-07-20",
-        Costo_Total: 1100000,
-        Estado: "Finalizado"
-    },
+    
     {
         _id: 2,
         ID_Alquiler: 2,
@@ -310,18 +618,8 @@ db.alquiler.insertMany([
         Estado: "Finalizado"
     },
 ]);
-
 db.registro_devolucion.insertMany([
-    {
-        _id: 1,
-        ID_Registro: 1,
-        ID_Alquiler_id: 1,
-        ID_Empleado_id: 1,
-        Fecha_Devolucion: "2024-01-15",
-        Combustible_Devuelto: 5.2,
-        Kilometraje_Devuelto: 20000,
-        Monto_Adicional: 20000,
-    },
+  
     {
         _id: 2,
         ID_Registro: 2,
@@ -363,7 +661,6 @@ db.registro_devolucion.insertMany([
         Monto_Adicional: 0,
     }
 ]);
-
 db.resgistro_entrega.insertMany([
     {
         _id: 1,
@@ -411,7 +708,6 @@ db.resgistro_entrega.insertMany([
         Kilometraje_Entregado: 39643,
     }
 ]);
-
 db.empleado.insertMany([
     {
         _id: 1,
