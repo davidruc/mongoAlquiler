@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
+
 dotenv.config("../");
 export async function conexion(){
     try {
