@@ -52,12 +52,12 @@ db.createCollection("automovil", {
                     "bsonType": "string",
                     "maxLength": 85,
                     "minLength": 1,
-                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
                 }, Modelo:{
                     "bsonType": "string",
                     "maxLength": 25,
                     "minLength": 1,
-                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\\s-]+$",
                 }, Anio:{
                     "bsonType": "int",
                     "minimum": 1885,

@@ -2,18 +2,17 @@ import "reflect-metadata";
 import { plainToClass, classToPlain } from "class-transformer";
 import { validate } from "class-validator";
 import { Automovil } from "./DTO/Automovil.js";
+import { Parametros } from "./DTO/Parametros.js";
 import { Router } from "express";
 const appMiddlewareAutomovilVerify = Router();
 const appDTOData = Router();
+const appDTOParam = Router();
 
 appMiddlewareAutomovilVerify.use((req, res, next) =>{
     if(!req.rateLimit) return; 
-    console.log(req.data);
     let {payload} = req.data;
-    
     const { iat , exp , ...newPayload} = payload;
     payload = newPayload;
-    
     let Clone = JSON.stringify(classToPlain(plainToClass(Automovil, {}, {ignoreDecorators: true})));
     let Verify = Clone === JSON.stringify(payload);
     if(!Verify){
@@ -25,7 +24,7 @@ appMiddlewareAutomovilVerify.use((req, res, next) =>{
 
 appDTOData.use( async (req,res,next) =>{
     try{
-        let data = plainToClass( Automovil, req.body);
+        let data = plainToClass(Automovil, req.body);
         await validate(data);
         req.body = JSON.parse(JSON.stringify(data));
         req.data = undefined;
@@ -35,6 +34,16 @@ appDTOData.use( async (req,res,next) =>{
     }
 });
 
+appDTOParam.use("/:id", async (req, res, next)=>{
+    try{
+        let parametro = plainToClass(Parametros, req.params);
+        await validate(parametro);
+        next();
+    }catch (error){
+        res.status(error.status).send(error);
+    }
+});
+
 export {
-    appMiddlewareAutomovilVerify, appDTOData
+    appMiddlewareAutomovilVerify, appDTOData, appDTOParam
 }
