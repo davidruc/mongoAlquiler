@@ -1,14 +1,13 @@
-/* import { Collection } from "mongodb"; */
-
 import dotenv from "dotenv";
 import express from "express";
 import appAutomovil from "./routes/automovil.js";
-
+import { appToken, appVerify } from "./middleware/token.js";
 dotenv.config();
 const app = express()
 
 app.use(express.json());
-app.use("/autos", appAutomovil)
+app.use("/token", appToken)
+app.use("/autos", appVerify , appAutomovil)
 
 
 
@@ -21,10 +20,3 @@ app.listen(config, ()=>{
 
 
 
-/* import { conexion } from "./db/atlas.js";
-let db = await conexion(); */
-
-//Como saber si la conexion que voy a crear existe
-/* const collections = await db.listCollections().toArray();
-const bandera = collections.some((collection)=> collection.name === "automovil");
-console.log(bandera); */
