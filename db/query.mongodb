@@ -155,7 +155,6 @@ db.createCollection("reserva", {
         }
     }
 });
-use("db_campus_alquiler");
 db.createCollection("cliente", {
     capped: true,
     size: 16000,
@@ -174,13 +173,13 @@ db.createCollection("cliente", {
                     bsonType: "string",
                     "maxLength": 255,
                     "minLength": 1,
-                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
                 },
                 Apellido: {
                     bsonType: "string",
                     "maxLength": 255,
                     "minLength": 1,
-                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
                 },
                 DNI: {
                     "bsonType": "number",
@@ -202,7 +201,6 @@ db.createCollection("cliente", {
         }
     }
 });
-
 db.createCollection("alquiler", {
     capped: true,
     size: 16000,
@@ -279,7 +277,7 @@ db.createCollection("registro_devolucion", {
                     description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
                 },
                 Combustible_Devuelto: {
-                    "bsonType": "int",
+                    "bsonType": "double",
                     "minimum": 1,
                     "maximum": 20,
                 },
@@ -357,13 +355,13 @@ db.createCollection("empleado", {
                     bsonType: "string", 
                     "maxLength": 255,
                     "minLength": 1,
-                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
                 },
                 Apellido: {
                     bsonType: "string", 
                     "maxLength": 255,
                     "minLength": 1,
-                    "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
+                    "pattern": "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\\s-]+$"
                 },
                 DNI: {
                     "bsonType": "number",
@@ -389,7 +387,6 @@ db.createCollection("empleado", {
         }
     }
 });
-
 
 
 /* insertar datos de prueba */
@@ -509,7 +506,6 @@ db.reserva.insertMany([
         Estado: "Apartado"
     }
 ]);
-use("db_campus_alquiler");
 db.cliente.insertMany([
     {
         ID_Cliente: 2,
@@ -558,13 +554,12 @@ db.cliente.insertMany([
     }
 ]);
 db.alquiler.insertMany([
-    
     {
         ID_Alquiler: 2,
         ID_Cliente_id: 2,
         ID_Automovil_id: 2,
-        Fecha_Inicio: "2023-07-15",
-        Fecha_Fin: "2023-07-20",
+        Fecha_Inicio: new Date (2024,1,15),
+        Fecha_Fin: new Date (2024,3,15),
         Costo_Total: 5100000,
         Estado: "activo"
     },
@@ -572,8 +567,8 @@ db.alquiler.insertMany([
         ID_Alquiler: 3,
         ID_Cliente_id: 3,
         ID_Automovil_id: 3,
-        Fecha_Inicio: "2023-07-15",
-        Fecha_Fin: "2023-07-20",
+        Fecha_Inicio: new Date (2024,1,15),
+        Fecha_Fin: new Date (2024,3,15),
         Costo_Total: 2100000,
         Estado: "activo"
     },
@@ -581,8 +576,8 @@ db.alquiler.insertMany([
         ID_Alquiler: 4,
         ID_Cliente_id: 4,
         ID_Automovil_id: 4,
-        Fecha_Inicio: "2023-07-05",
-        Fecha_Fin: "2023-07-20",
+        Fecha_Inicio: new Date (2024,1,15),
+        Fecha_Fin: new Date (2024,3,15),
         Costo_Total: 900000,
         Estado: "activo"
     },
@@ -590,8 +585,8 @@ db.alquiler.insertMany([
         ID_Alquiler: 5,
         ID_Cliente_id: 5,
         ID_Automovil_id: 5,
-        Fecha_Inicio: "2023-07-15",
-        Fecha_Fin: "2023-07-20",
+        Fecha_Inicio: new Date (2024,1,15),
+        Fecha_Fin: new Date (2024,3,15),
         Costo_Total: 1200000,
         Estado: "Finalizado"
     },
@@ -602,7 +597,7 @@ db.registro_devolucion.insertMany([
         ID_Registro: 2,
         ID_Alquiler_id: 2,
         ID_Empleado_id: 2,
-        Fecha_Devolucion: "2024-01-15",
+        Fecha_Devolucion: new Date (2024,3,15),
         Combustible_Devuelto: 1.2,
         Kilometraje_Devuelto: 30000,
         Monto_Adicional: 10000,
@@ -611,28 +606,25 @@ db.registro_devolucion.insertMany([
         ID_Registro: 3,
         ID_Alquiler_id: 3,
         ID_Empleado_id: 3,
-        Fecha_Devolucion: "2024-01-15",
+        Fecha_Devolucion:new Date (2024,3,15),
         Combustible_Devuelto: 2.2,
-        Kilometraje_Devuelto: 20000,
-        Monto_Adicional: 0,
+        Kilometraje_Devuelto: 20000
     },
     {
         ID_Registro: 4,
         ID_Alquiler_id: 4,
         ID_Empleado_id: 4,
-        Fecha_Devolucion: "2024-01-15",
+        Fecha_Devolucion: new Date (2024,3,15),
         Combustible_Devuelto: 6.2,
-        Kilometraje_Devuelto: 21232,
-        Monto_Adicional: 0,
+        Kilometraje_Devuelto: 21232
     },
     {
         ID_Registro: 5,
         ID_Alquiler_id: 5,
         ID_Empleado_id: 5,
-        Fecha_Devolucion: "2024-01-15",
+        Fecha_Devolucion: new Date (2024,3,15),
         Combustible_Devuelto: 8.2,
-        Kilometraje_Devuelto: 40000,
-        Monto_Adicional: 0,
+        Kilometraje_Devuelto: 40000
     }
 ]);
 db.resgistro_entrega.insertMany([
@@ -640,7 +632,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 1,
         ID_Alquiler_id: 1,
         ID_Empleado_id: 1,
-        Fecha_Entrega: "2023-12-15",
+        Fecha_Entrega: new Date (2024,3,15),
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 19000,
     },
@@ -648,7 +640,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 2,
         ID_Alquiler_id: 2,
         ID_Empleado_id: 2,
-        Fecha_Entrega: "2023-12-15",
+        Fecha_Entrega: new Date (2024,3,15),
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 29532,
     },
@@ -656,7 +648,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 3,
         ID_Alquiler_id: 3,
         ID_Empleado_id: 3,
-        Fecha_Entrega: "2023-12-15",
+        Fecha_Entrega: new Date (2024,3,15),
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 19454,
     },
@@ -664,7 +656,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 4,
         ID_Alquiler_id: 4,
         ID_Empleado_id: 4,
-        Fecha_Entrega: "2023-12-15",
+        Fecha_Entrega: new Date (2024,3,15),
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 20000,
     },
@@ -672,7 +664,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 5,
         ID_Alquiler_id: 5,
         ID_Empleado_id: 5,
-        Fecha_Entrega: "2023-12-15",
+        Fecha_Entrega: new Date (2024,3,15),
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 39643,
     }
@@ -682,63 +674,63 @@ db.empleado.insertMany([
         ID_Empleado: 1,
         Nombre: "Empleado1",
         Apellido: "o",
-        DNI: "64578215",
+        DNI: 645782155,
         Direccion: "Calle 11",
-        Telefono: "3225869547",
+        Telefono: 3226589547,
         Cargo: "Agente de Entrega"
     },
     {
         ID_Empleado: 2,
         Nombre: "Empleado2",
         Apellido: "o",
-        DNI: "54879571",
+        DNI: 645782155,
         Direccion: "Calle 11",
-        Telefono: "3152568475",
+        Telefono: 3226589547,
         Cargo: "Agente de Mantenimiento"
     },
     {
         ID_Empleado: 3,
         Nombre: "Empleado3",
         Apellido: "o",
-        DNI: "1099586475",
+        DNI: 645782155,
         Direccion: "Calle 12",
-        Telefono: "3285268475",
+        Telefono: 3226589547,
         Cargo: "Agente de Entrega"
     },
     {
         ID_Empleado: 4,
         Nombre: "Empleado4",
         Apellido: "o",
-        DNI: "10045421685",
+        DNI: 645782155,
         Direccion: "Calle 11",
-        Telefono: "3112589516",
+        Telefono: 3226589547,
         Cargo: "Agente de Mantenimiento"
     },
     {
         ID_Empleado: 5,
         Nombre: "Empleado5",
         Apellido: "o",
-        DNI: "10045421685",
+        DNI: 645782155,
         Direccion: "Calle 11",
-        Telefono: "3112589516",
+        Telefono: 3226589547,
         Cargo: "Agente de Mantenimiento"
     },
     {
         ID_Empleado: 6,
         Nombre: "Empleado6",
         Apellido: "o",
-        DNI: "4343244324",
+        DNI: 645782155,
         Direccion: "Calle 11",
-        Telefono: "3112589516",
+        Telefono: 3226589547,
         Cargo: "Gerente"
     },
     {
         ID_Empleado: 7,
         Nombre: "Empleado7",
         Apellido: "o",
-        DNI: "4343244324",
+        DNI: 645782155,
         Direccion: "Calle 11",
-        Telefono: "3112589516",
+        Telefono: 3226589547,
         Cargo: "Asistente"
     }
 ]);
