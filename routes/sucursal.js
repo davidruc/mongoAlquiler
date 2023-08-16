@@ -7,13 +7,91 @@ const appSucursal = Router();
 let db = await conexion();
 let sucursal = db.collection("sucursal");
 
-appSucursal.get("/:id?", configGET(),appMiddlewareSucursalVerify, appDTOParam, async(req, res)=>{
+const getSucursalesById = (id)=>{
+    return new Promise(async(resolve)=>{
+        let result = await sucursal.aggregate([
+            { $match: { "ID_Sucursal": parseInt(id)}},
+            {
+                $project: {
+                 "_id": 0,
+                 "id_sucursal": "$ID_Sucursal",
+                 "sucursal":"$Nombre",
+                 "ubicacion":"$Direccion",
+                 "contacto":"$Telefono"
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+const getAllSucursales = ()=>{
+    return new Promise(async(resolve)=>{
+        let result = await sucursal.aggregate([
+            {
+                $project: {
+                    "_id": 0,
+                    "id_sucursal": "$ID_Sucursal",
+                    "sucursal":"$Nombre",
+                    "ubicacion":"$Direccion",
+                    "contacto":"$Telefono"
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+appSucursal.get("/", configGET(),appMiddlewareSucursalVerify, async(req, res)=>{
     if(!req.rateLimit) return;
-    let result = (!req.params.id)     
-    ? await sucursal.find({}).toArray()
-    : await sucursal.find({ "ID_Sucursal": parseInt(req.params.id)}).toArray();
+    try{
+        const {id} = req.query;
+        if(id){
+            const data = await getSucursalesById(id);
+            res.send(data);
+        } else {
+            const data = await getAllSucursales();
+            res.send(data);
+        }
+    }
+    catch(err){
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+    }
+});
+
+appSucursal.get("/cantidadTotal", configGET(),appMiddlewareSucursalVerify, async(req, res)=>{
+    if(!req.rateLimit) return;
+    let result = await sucursal.aggregate([
+        {
+            $lookup: {
+              from: "sucursal_automovil",
+              localField: "ID_Sucursal",
+              foreignField: "ID_Sucursal_id",
+              as: "autos"
+            }
+        },
+        {$unwind : "$autos"},
+        {
+            $group: {
+              _id: "$Nombre",
+              direccion: {$first: "$Direccion"},
+              CantidadAutos: {
+                $sum: "$autos.Cantidad_Disponible"
+              }
+            }
+        },
+        {
+            $project: {
+              "_id": 0,
+              "sucursal": "$_id",
+              "direccion": "$direccion",
+              "cantidad_automoviles": "$CantidadAutos"
+            }
+        }
+    ]).toArray();
     res.send(result);
-})
+});
+
+
 appSucursal.post("/", configGET(), appMiddlewareSucursalVerify, appDTOData, async(req, res)=>{
     if(!req.rateLimit) return;
     try{
