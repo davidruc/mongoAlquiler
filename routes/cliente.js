@@ -14,6 +14,7 @@ const getClienteById = (id)=>{
     return new Promise(async(resolve)=>{
         let result = await cliente.aggregate(
             [
+                { $match: { "ID_Cliente": parseInt(id) }},
                 {
                     $project:{
                         "_id": 0,
@@ -24,8 +25,7 @@ const getClienteById = (id)=>{
                         "ubicacion_cliente": "$Direccion",
                         "numero_contacto": "$Telefono",
                     }
-                },
-                { $match: { "id": parseInt(id) }}
+                }
             ]).toArray();
         resolve(result);
     })
