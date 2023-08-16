@@ -21,6 +21,7 @@
     "mongodb": "5.7.0",
     "nodemon": "3.0.1",
     "reflect-metadata": "0.1.13",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "express-query-boolean": "2.0.0"
   }
 }
