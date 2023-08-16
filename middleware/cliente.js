@@ -2,13 +2,11 @@ import "reflect-metadata";
 import { plainToClass, classToPlain } from "class-transformer";
 import { validate } from "class-validator";
 import { createInstance } from "./token.js";
-import {ClienteGet} from "./DTO/ClienteGet.js"
 import { Parametros } from "./DTO/Parametros.js";
 import { Router } from "express";
 const appMiddlewareClienteVerify = Router();
 const appDTOData = Router();
 const appDTOParam = Router();
-const appDATA = Router();
 
 appMiddlewareClienteVerify.use((req, res, next) =>{
     if(!req.rateLimit) return; 
@@ -24,9 +22,6 @@ appMiddlewareClienteVerify.use((req, res, next) =>{
     }
 });
 
-
-
-
 appDTOData.use( async (req,res,next) =>{
     try{
         let data = plainToClass(createInstance("datos_clientes").class , req.body);
@@ -38,19 +33,6 @@ appDTOData.use( async (req,res,next) =>{
         res.status(err.status).send(err);
     }
 });
-
-export let appDATAGET = async(result)=>{
-    try{
-        console.log(result, "hola");
-        let body = plainToClass(ClienteGet, result);
-        console.log(body, "body");
-        return body
-        
-    }catch (error){
-        res.status(error.status).send(error);
-    }
-   
-}
 
 appDTOParam.use("/:id", async (req, res, next)=>{
     try{

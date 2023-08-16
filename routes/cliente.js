@@ -9,6 +9,7 @@ let db = await conexion();
 let cliente = db.collection("cliente");
 
 appCliente.use(expressQueryBoolean());
+
 const getClienteById = (id)=>{
     return new Promise(async(resolve)=>{
         let result = await cliente.aggregate(
@@ -103,8 +104,9 @@ const getClientesByIdPendientes = (idPendientes)=>{
 const getAllCientes = ()=>{
     return new Promise(async(resolve)=>{
         let result = await cliente.aggregate(
-            {
-                $project:{
+            [
+                {
+                    $project:{
                     "_id": 0,
                     "id": "$ID_Cliente",
                     "nombre_cliente": "$Nombre",
@@ -112,12 +114,12 @@ const getAllCientes = ()=>{
                     "documento": "$DNI",
                     "ubicacion_cliente": "$Direccion",
                     "numero_contacto": "$Telefono",
+                    }
                 }
-            }).toArray();
+            ]).toArray();
         resolve(result);
     })
 };
-
 appCliente.get("/", configGET() ,appMiddlewareClienteVerify, async(req, res)=>{
     try{
         const {id, documento, idPendientes} = req.query;
@@ -139,7 +141,6 @@ appCliente.get("/", configGET() ,appMiddlewareClienteVerify, async(req, res)=>{
         res.sendStatus(500);
     }
 });
-
 appCliente.get("/reserva_activa", async(req, res)=>{
     req.body = undefined;
     let result = await cliente.aggregate([
@@ -324,7 +325,6 @@ appCliente.get("/entregados", async(req, res)=>{
     ]).toArray();
     res.send(result);
 });
-
 appCliente.post("/", configGET(), appMiddlewareClienteVerify, appDTOData, async(req, res)=>{
     if(!req.rateLimit) return;
     try{
