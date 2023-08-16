@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { configGET } from "../middleware/limit.js";
+import expressQueryBoolean from 'express-query-boolean';
 import { appMiddlewareAutomovilVerify, appDTOData, appDTOParam } from "../middleware/automovil.js";
 import { conexion } from "../db/atlas.js";
 const appAutomovil = Router();
@@ -7,13 +8,169 @@ const appAutomovil = Router();
 let db = await conexion();
 let automovil = db.collection("automovil");
 
-appAutomovil.get("/:id?", configGET(),appMiddlewareAutomovilVerify, appDTOParam, async(req, res)=>{
+appAutomovil.use(expressQueryBoolean());
+
+const getAutomovilById = (id)=>{
+    return new Promise(async(resolve)=>{
+        let result = await automovil.aggregate([
+            { $match: { "ID_Automovil": parseInt(id)}},
+            {
+                $project: {
+                  "_id": 0,
+                  "id_auto": "$ID_Automovil",
+                  "marca_auto": "$Marca",
+                  "modelo_auto": "$Modelo",
+                  "año_auto": "$Anio",
+                  "tipo_auto": "$Tipo",
+                  "capacidad_auto": "$Capacidad",
+                  "costo_dia": "$Precio_Diario",
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+const getAllAutos = ()=>{
+    return new Promise(async(resolve)=>{
+        let result = await automovil.aggregate([
+            {
+                $project: {
+                  "_id": 0,
+                  "id_auto": "$ID_Automovil",
+                  "marca_auto": "$Marca",
+                  "modelo_auto": "$Modelo",
+                  "año_auto": "$Anio",
+                  "tipo_auto": "$Tipo",
+                  "capacidad_auto": "$Capacidad",
+                  "costo_dia": "$Precio_Diario",
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+appAutomovil.get("/", configGET(),appMiddlewareAutomovilVerify, appDTOParam, async(req, res)=>{
     if(!req.rateLimit) return;
-    let result = (!req.params.id)     
-    ? await automovil.find({}).toArray()
-    : await automovil.find({ "ID_Automovil": parseInt(req.params.id)}).toArray();
+    try{
+        const {id} = req.query;
+        if(id){
+            const data = await getAutomovilById(id);
+            res.send(data);
+        } else {
+            const data = await getAllAutos();
+            res.send(data);
+        }
+    }
+    catch(err){
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+    }
+});
+appAutomovil.get("/capacidad_grande", configGET(), appMiddlewareAutomovilVerify , async(req, res)=>{
+    if(!req.rateLimit) return;
+    let result = await automovil.aggregate([
+        {
+            $match: {"Capacidad": {$gt :5}}
+        },
+        {
+            $project: {
+              "_id": 0,
+              "id_auto": "$ID_Automovil",
+              "marca_auto": "$Marca",
+              "modelo_auto": "$Modelo",
+              "año_auto": "$Anio",
+              "tipo_auto": "$Tipo",
+              "capacidad_auto": "$Capacidad",
+              "costo_dia": "$Precio_Diario",
+            }
+        }
+    ]).toArray();
     res.send(result);
-})
+});
+appAutomovil.get("/autos_por_marca", configGET(), appMiddlewareAutomovilVerify , async(req, res)=>{
+    if(!req.rateLimit) return;
+    let result = await automovil.aggregate([
+        { $match: { Tipo: "Automovil" } }, 
+        {
+            $project: {
+                "_id": 0,
+                "id_auto": "$ID_Automovil" ,
+                "Marca": "$Marca",
+                "modelo_auto": "$Modelo",
+                "año_modelo": "$Anio",
+                "tipo_automovil": "$Tipo",
+                "capacidad_auto": "$Capacidad",
+                "precio_dia": "$Precio_Diario"
+            }
+        },
+        {
+            $group: {
+              _id: "$Marca",
+              automoviles: {
+              $push: "$$ROOT"
+              }
+            }
+        },
+        {
+            $project: {
+                "_id": 0,
+                "marca_auto": "$_id",
+                "automoviles": "$automoviles",
+                
+            }
+        }
+    ]).toArray();
+    res.send(result);
+});
+appAutomovil.get("/autos_grandes_disponibles", configGET(), appMiddlewareAutomovilVerify , async(req, res)=>{
+    if(!req.rateLimit) return;
+    let result = await automovil.aggregate([
+        {
+            $match: {
+                "Capacidad": {$gt :5}
+            }
+        },
+       
+        {
+            $lookup: {
+              from: "sucursal_automovil",
+              localField: "ID_Automovil",
+              foreignField: "ID_Automovil_id",
+              pipeline: [
+                {
+                    $project: {
+                      "_id": 0,
+                      "ID_Sucursal_id": 0,
+                      "ID_Automovil_id":0 ,        
+                    }
+                },
+                {
+                    $project: {
+                        "unidades_disponibles": "$Cantidad_Disponible" 
+                    }
+                }
+              ],
+              as: "detalles"
+            }
+        }, {
+            $unwind: "$detalles"
+        }, {
+            $project: {
+                "_id": 0,
+                "id_auto": "$ID_Automovil" ,
+                "Marca": "$Marca",
+                "modelo_auto": "$Modelo",
+                "año_modelo": "$Anio",
+                "tipo_automovil": "$Tipo",
+                "capacidad_auto": "$Capacidad",
+                "precio_dia": "$Precio_Diario",
+                "Disponibilidad": "$detalles"
+            }
+        }
+    ]).toArray();
+    res.send(result);
+});
+
 appAutomovil.post("/", configGET(), appMiddlewareAutomovilVerify, appDTOData, async(req, res)=>{
     if(!req.rateLimit) return;
     try{
