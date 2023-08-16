@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { plainToClass, classToPlain } from "class-transformer";
 import { validate } from "class-validator";
-import { Automovil } from "./DTO/Automovil.js";
+import { createInstance } from "./token.js";
 import { Parametros } from "./DTO/Parametros.js";
 import { Router } from "express";
 const appMiddlewareAutomovilVerify = Router();
@@ -13,7 +13,7 @@ appMiddlewareAutomovilVerify.use((req, res, next) =>{
     let {payload} = req.data;
     const { iat , exp , ...newPayload} = payload;
     payload = newPayload;
-    let Clone = JSON.stringify(classToPlain(plainToClass(Automovil, {}, {ignoreDecorators: true})));
+    let Clone = JSON.stringify(classToPlain(plainToClass(createInstance("autos").class , {}, {ignoreDecorators: true})));
     let Verify = Clone === JSON.stringify(payload);
     if(!Verify){
         res.status(406).send({status : 406, message: "No autorizado"});
@@ -24,7 +24,7 @@ appMiddlewareAutomovilVerify.use((req, res, next) =>{
 
 appDTOData.use( async (req,res,next) =>{
     try{
-        let data = plainToClass(Automovil, req.body);
+        let data = plainToClass(createInstance("autos").class , req.body);
         await validate(data);
         req.body = JSON.parse(JSON.stringify(data));
         req.data = undefined;
