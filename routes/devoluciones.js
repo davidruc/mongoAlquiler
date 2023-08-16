@@ -10,8 +10,32 @@ let registro_devolucion = db.collection("registro_devolucion");
 appDevoluciones.get("/:id?", configGET(),appMiddlewareDevolucionVerify, appDTOParam, async(req, res)=>{
     if(!req.rateLimit) return;
     let result = (!req.params.id)     
-    ? await registro_devolucion.find({}).toArray()
-    : await registro_devolucion.find({ "ID_Registro": parseInt(req.params.id)}).toArray();
+    ? await registro_devolucion.aggregate([{
+        $project: {
+        "_id":0,
+        "id":"$ID_Registro",
+        "id_alquiler":"$ID_Alquiler_id",
+        "id_empleado":"$ID_Empleado_id",
+        "fecha_entrega":"$Fecha_Devolucion",
+        "combustible_retornado":"$Combustible_Devuelto",
+        "kilometraje_retornado":"$Kilometraje_Devuelto",
+        "costo_adicional":"$Monto_Adicional",
+    }}]).toArray()
+    : await registro_devolucion.aggregate([
+        { $match: {"ID_Registro": parseInt(req.params.id)}},
+        {
+            $project: {
+                "_id":0,
+                "id":"$ID_Registro",
+                "id_alquiler":"$ID_Alquiler_id",
+                "id_empleado":"$ID_Empleado_id",
+                "fecha_entrega":"$Fecha_Devolucion",
+                "combustible_retornado":"$Combustible_Devuelto",
+                "kilometraje_retornado":"$Kilometraje_Devuelto",
+                "costo_adicional":"$Monto_Adicional"
+            }
+        }
+    ]).toArray();
     res.send(result);
 })
 appDevoluciones.post("/", configGET(), appMiddlewareDevolucionVerify, appDTOData, async(req, res)=>{

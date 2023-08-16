@@ -10,8 +10,33 @@ let entregas = db.collection("registro_entrega");
 appEntregas.get("/:id?", configGET(),appMiddlewareEntregasVerify, appDTOParam, async(req, res)=>{
     if(!req.rateLimit) return;
     let result = (!req.params.id)     
-    ? await entregas.find({}).toArray()
-    : await entregas.find({ "ID_Registro": parseInt(req.params.id)}).toArray();
+    ? await entregas.aggregate([
+        {
+            $project: {
+                "_id": 0,
+                "id": "$ID_Registro",
+                "id_alquiler": "$ID_Alquiler_id",
+                "id_empleado": "$ID_Empleado_id",
+                "fecha_inicio": "$Fecha_Entrega", 
+                "combustible_actual": "$Combustible_Entregado",
+                "Kilometraje_actual": "$Kilometraje_Entregado",
+            }
+        }
+    ]).toArray()
+    : await entregas.aggregate([
+        {$match: { "ID_Registro": parseInt(req.params.id)}},
+        {
+            $project: {
+                "_id": 0,
+                "id": "$ID_Registro",
+                "id_alquiler": "$ID_Alquiler_id",
+                "id_empleado": "$ID_Empleado_id",
+                "fecha_inicio": "$Fecha_Entrega", 
+                "combustible_actual": "$Combustible_Entregado",
+                "Kilometraje_actual": "$Kilometraje_Entregado",
+            }
+        }
+    ]).toArray();
     res.send(result);
 })
 appEntregas.post("/", configGET(), appMiddlewareEntregasVerify, appDTOData, async(req, res)=>{

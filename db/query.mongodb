@@ -121,8 +121,6 @@ db.createCollection("sucursal_automovil", {
         }
     }
 });
-
-use("db_campus_alquiler");
 db.createCollection("reserva", {
     capped: true,
     size: 20000,
