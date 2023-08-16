@@ -12,6 +12,9 @@ db.createCollection("sucursal", {
                 "ID_Sucursal", "Nombre", "Direccion", "Telefono"
             ],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Sucursal: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -46,6 +49,9 @@ db.createCollection("automovil", {
             additionalProperties: false,
             required: [ "ID_Automovil", "Marca", "Modelo", "Anio", "Tipo", "Capacidad", "Precio_Diario" ],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Automovil: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -92,6 +98,9 @@ db.createCollection("sucursal_automovil", {
             additionalProperties: false,
             required: [ "ID_Sucursal_id", "ID_Automovil_id", "Cantidad_Disponible"],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Sucursal_id: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -112,6 +121,8 @@ db.createCollection("sucursal_automovil", {
         }
     }
 });
+
+use("db_campus_alquiler");
 db.createCollection("reserva", {
     capped: true,
     size: 20000,
@@ -122,6 +133,9 @@ db.createCollection("reserva", {
             additionalProperties: false,
             required: [ "ID_Reserva", "ID_Cliente_id", "ID_Automovil_id", "Fecha_Reserva", "Fecha_Inicio", "Fecha_Fin", "Estado"],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Reserva: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -138,16 +152,19 @@ db.createCollection("reserva", {
                     "maximum": 100,
                 },
                 Fecha_Reserva: {
-                    bsonType: "date",
-                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato date",
+                    bsonType: "string",
+                    pattern:  "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",  
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato que siga el patron",
                 },
                 Fecha_Inicio: {
-                    bsonType: "date",
-                    description: "Debe informar el campo Fecha_Inicio y este debe ser un dato date",
+                    bsonType: "string",
+                    pattern:  "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",  
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato que siga el patron",
                 },
                 Fecha_Fin: {
-                    bsonType: "date",
-                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                    bsonType: "string",
+                    pattern:  "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",  
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato que siga el patron",
                 },
                 Estado: {
                     bsonType: "string",
@@ -159,6 +176,7 @@ db.createCollection("reserva", {
         }
     }
 });
+
 db.createCollection("cliente", {
     capped: true,
     size: 16000,
@@ -169,6 +187,9 @@ db.createCollection("cliente", {
             additionalProperties: false,
             required: [ "ID_Cliente", "Nombre", "Apellido", "DNI", "Direccion", "Telefono"],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Cliente: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -216,6 +237,9 @@ db.createCollection("alquiler", {
             additionalProperties: false,
             required: [ "ID_Alquiler", "ID_Cliente_id", "ID_Automovil_id", "Fecha_Inicio", "Fecha_Fin", "Costo_Total", "Estado"],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Alquiler: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -232,12 +256,14 @@ db.createCollection("alquiler", {
                     "maximum": 100,
                 },
                 Fecha_Inicio: {
-                    bsonType: "date",
-                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                    bsonType: "string",
+                    pattern:  "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",  
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato que siga el patron",
                 },
                 Fecha_Fin: {
-                    bsonType: "date",
-                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                    bsonType: "string",
+                    pattern:  "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",  
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato que siga el patron",
                 },
                 Costo_Total: {
                     "bsonType": "number",
@@ -264,6 +290,9 @@ db.createCollection("registro_devolucion", {
             additionalProperties: false,
             required: [ "ID_Registro", "ID_Alquiler_id", "ID_Empleado_id", "Fecha_Devolucion", "Combustible_Devuelto", "Kilometraje_Devuelto"],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Registro: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -280,8 +309,9 @@ db.createCollection("registro_devolucion", {
                     "maximum": 100,
                 },
                 Fecha_Devolucion: {
-                    bsonType: "date",
-                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                    bsonType: "string",
+                    pattern:  "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",  
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato que siga el patron",
                 },
                 Combustible_Devuelto: {
                     "bsonType": "double",
@@ -312,6 +342,9 @@ db.createCollection("registro_entrega", {
             additionalProperties: false,
             required: ["ID_Registro", "ID_Alquiler_id" ,"ID_Empleado_id" ,"Fecha_Entrega" ,"Combustible_Entregado","Kilometraje_Entregado"],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Registro: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -328,8 +361,9 @@ db.createCollection("registro_entrega", {
                     "maximum": 100,
                 },
                 Fecha_Entrega: {
-                    bsonType: "date",
-                    description: "Debe informar el campo Fecha_Fin y este debe ser un dato date",
+                    bsonType: "string",
+                    pattern:  "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",  
+                    description: "Debe informar el campo Fecha_Reserva y este debe ser un dato que siga el patron",
                 },
                 Combustible_Entregado: {
                     "bsonType": "int",
@@ -355,6 +389,9 @@ db.createCollection("empleado", {
             additionalProperties: false,
             required: [ "ID_Empleado", "Nombre", "Apellido", "DNI", "Direccion", "Telefono", "Cargo"],
             properties: {
+                _id: {
+                    "bsonType": "objectId"
+                },
                 ID_Empleado: {
                     "bsonType": "int",
                     "minimum": 0,
@@ -473,45 +510,45 @@ db.reserva.insertMany([
         ID_Reserva: 2,
         ID_Cliente_id: 2,
         ID_Automovil_id: 2,
-        Fecha_Reserva:new Date (2023,7,15),
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,1,20),
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
         Estado: "Confirmado"
     },
     {
         ID_Reserva: 3,
         ID_Cliente_id: 3,
         ID_Automovil_id: 3,
-        Fecha_Reserva:new Date (2023,7,15),
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,1,20),
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
         Estado: "Confirmado"
     },
     {
         ID_Reserva: 4,
         ID_Cliente_id: 4,
         ID_Automovil_id: 4,
-        Fecha_Reserva:new Date (2023,7,15),
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,1,20),
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
         Estado: "Apartado"
     },
     {
         ID_Reserva: 5,
         ID_Cliente_id: 5,
         ID_Automovil_id: 5,
-        Fecha_Reserva:new Date (2023,7,15),
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,1,20),
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
         Estado: "Confirmado"
     },
     {
         ID_Reserva: 6,
         ID_Cliente_id: 4,
         ID_Automovil_id: 2,
-        Fecha_Reserva:new Date (2023,7,15),
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,1,20),
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
         Estado: "Apartado"
     }
 ]);
@@ -567,8 +604,8 @@ db.alquiler.insertMany([
         ID_Alquiler: 2,
         ID_Cliente_id: 2,
         ID_Automovil_id: 2,
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,3,15),
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
         Costo_Total: 5100000,
         Estado: "activo"
     },
@@ -576,8 +613,8 @@ db.alquiler.insertMany([
         ID_Alquiler: 3,
         ID_Cliente_id: 3,
         ID_Automovil_id: 3,
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,3,15),
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
         Costo_Total: 2100000,
         Estado: "activo"
     },
@@ -585,8 +622,8 @@ db.alquiler.insertMany([
         ID_Alquiler: 4,
         ID_Cliente_id: 4,
         ID_Automovil_id: 4,
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,3,15),
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
         Costo_Total: 900000,
         Estado: "activo"
     },
@@ -594,8 +631,8 @@ db.alquiler.insertMany([
         ID_Alquiler: 5,
         ID_Cliente_id: 5,
         ID_Automovil_id: 5,
-        Fecha_Inicio: new Date (2024,1,15),
-        Fecha_Fin: new Date (2024,3,15),
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
         Costo_Total: 1200000,
         Estado: "Finalizado"
     },
@@ -606,7 +643,7 @@ db.registro_devolucion.insertMany([
         ID_Registro: 2,
         ID_Alquiler_id: 2,
         ID_Empleado_id: 2,
-        Fecha_Devolucion: new Date (2024,3,15),
+        Fecha_Devolucion: "2023-10-10",
         Combustible_Devuelto: 1.2,
         Kilometraje_Devuelto: 30000,
         Monto_Adicional: 10000,
@@ -615,7 +652,7 @@ db.registro_devolucion.insertMany([
         ID_Registro: 3,
         ID_Alquiler_id: 3,
         ID_Empleado_id: 3,
-        Fecha_Devolucion:new Date (2024,3,15),
+        Fecha_Devolucion:"2023-10-10",
         Combustible_Devuelto: 2.2,
         Kilometraje_Devuelto: 20000
     },
@@ -623,7 +660,7 @@ db.registro_devolucion.insertMany([
         ID_Registro: 4,
         ID_Alquiler_id: 4,
         ID_Empleado_id: 4,
-        Fecha_Devolucion: new Date (2024,3,15),
+        Fecha_Devolucion: "2023-10-10",
         Combustible_Devuelto: 6.2,
         Kilometraje_Devuelto: 21232
     },
@@ -631,7 +668,7 @@ db.registro_devolucion.insertMany([
         ID_Registro: 5,
         ID_Alquiler_id: 5,
         ID_Empleado_id: 5,
-        Fecha_Devolucion: new Date (2024,3,15),
+        Fecha_Devolucion: "2023-10-10",
         Combustible_Devuelto: 8.2,
         Kilometraje_Devuelto: 40000
     }
@@ -641,7 +678,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 1,
         ID_Alquiler_id: 1,
         ID_Empleado_id: 1,
-        Fecha_Entrega: new Date (2024,3,15),
+        Fecha_Entrega: "2023-10-10",
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 19000,
     },
@@ -649,7 +686,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 2,
         ID_Alquiler_id: 2,
         ID_Empleado_id: 2,
-        Fecha_Entrega: new Date (2024,3,15),
+        Fecha_Entrega: "2023-10-10",
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 29532,
     },
@@ -657,7 +694,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 3,
         ID_Alquiler_id: 3,
         ID_Empleado_id: 3,
-        Fecha_Entrega: new Date (2024,3,15),
+        Fecha_Entrega: "2023-10-10",
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 19454,
     },
@@ -665,7 +702,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 4,
         ID_Alquiler_id: 4,
         ID_Empleado_id: 4,
-        Fecha_Entrega: new Date (2024,3,15),
+        Fecha_Entrega: "2023-10-10",
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 20000,
     },
@@ -673,7 +710,7 @@ db.resgistro_entrega.insertMany([
         ID_Registro: 5,
         ID_Alquiler_id: 5,
         ID_Empleado_id: 5,
-        Fecha_Entrega: new Date (2024,3,15),
+        Fecha_Entrega: "2023-10-10",
         Combustible_Entregado: 5,
         Kilometraje_Entregado: 39643,
     }
