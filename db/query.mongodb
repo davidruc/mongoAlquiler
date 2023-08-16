@@ -7,6 +7,7 @@ db.createCollection("sucursal", {
     validator:{
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [
                 "ID_Sucursal", "Nombre", "Direccion", "Telefono"
             ],
@@ -42,6 +43,7 @@ db.createCollection("automovil", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [ "ID_Automovil", "Marca", "Modelo", "Anio", "Tipo", "Capacidad", "Precio_Diario" ],
             properties: {
                 ID_Automovil: {
@@ -87,6 +89,7 @@ db.createCollection("sucursal_automovil", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [ "ID_Sucursal_id", "ID_Automovil_id", "Cantidad_Disponible"],
             properties: {
                 ID_Sucursal_id: {
@@ -116,6 +119,7 @@ db.createCollection("reserva", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [ "ID_Reserva", "ID_Cliente_id", "ID_Automovil_id", "Fecha_Reserva", "Fecha_Inicio", "Fecha_Fin", "Estado"],
             properties: {
                 ID_Reserva: {
@@ -162,6 +166,7 @@ db.createCollection("cliente", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [ "ID_Cliente", "Nombre", "Apellido", "DNI", "Direccion", "Telefono"],
             properties: {
                 ID_Cliente: {
@@ -208,6 +213,7 @@ db.createCollection("alquiler", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [ "ID_Alquiler", "ID_Cliente_id", "ID_Automovil_id", "Fecha_Inicio", "Fecha_Fin", "Costo_Total", "Estado"],
             properties: {
                 ID_Alquiler: {
@@ -255,6 +261,7 @@ db.createCollection("registro_devolucion", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [ "ID_Registro", "ID_Alquiler_id", "ID_Empleado_id", "Fecha_Devolucion", "Combustible_Devuelto", "Kilometraje_Devuelto"],
             properties: {
                 ID_Registro: {
@@ -295,13 +302,14 @@ db.createCollection("registro_devolucion", {
         }
     }
 });
-db.createCollection("resgistro_entrega", {
+db.createCollection("registro_entrega", {
     capped: true,
     size: 8000,
     max: 50,
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: ["ID_Registro", "ID_Alquiler_id" ,"ID_Empleado_id" ,"Fecha_Entrega" ,"Combustible_Entregado","Kilometraje_Entregado"],
             properties: {
                 ID_Registro: {
@@ -344,6 +352,7 @@ db.createCollection("empleado", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
+            additionalProperties: false,
             required: [ "ID_Empleado", "Nombre", "Apellido", "DNI", "Direccion", "Telefono", "Cargo"],
             properties: {
                 ID_Empleado: {
@@ -393,8 +402,8 @@ db.createCollection("empleado", {
 use("db_campus_alquiler");
 db.sucursal.insertOne(
     {
-        ID_Sucursal: 1,
-        Nombre: "qerwerwerew",
+        ID_Sucursal: 3,
+        Nombre: "medallo papa",
         Direccion: "calle 15# 21",
         Telefono: 3185767865,
     }
@@ -753,25 +762,42 @@ db.getCollection("cliente").aggregate([
     {
         $lookup: {
           from: "alquiler",
-          localField: "_id",
+          localField: "ID_Cliente",
           foreignField: "ID_Cliente_id",
-          as: "FK_alquiler"
+          pipeline: [
+            {
+                $project: {
+                  "_id": 0,
+                  "id_alquiler": "$ID_Alquiler",
+                  "estado_alquiler": "$Estado",
+                  "inicio_alquiler": "$Fecha_Inicio",
+                  "fin_alquiler": "$Fecha_Fin",
+                  "costo_alquiler": "$Costo_Total",
+                }
+            }
+          ],
+          as: "info_alquiler"
         }
     },
-    {
-        $project: {
-          "FK_alquiler._id": 0,
-          "FK_alquiler.ID_Cliente_id": 0,
-          "FK_alquiler.ID_Automovil_id": 0,
-          "_id": 0,
-          "Email": 0
-        }
-    },
+    
     {
         $match: {
-            "FK_alquiler.Estado": {$eq : "activo"}
+            "info_alquiler.estado_alquiler": {$eq : "activo"}
         }
-    }
+    },
+    {$unwind: "$info_alquiler"},
+    {
+        $project: {
+            "_id": 0,
+            "id": "$ID_Cliente",
+            "nombre_cliente": "$Nombre",
+            "apellido_cliente": "$Apellido",
+            "documento": "$DNI",
+            "ubicacion_cliente": "$Direccion",
+            "numero_contacto": "$Telefono",
+            "info_alquiler": "$info_alquiler"
+        }
+    },
 ]);
 
 /* 5 Mostrar todas las reservas pendientes con los datos del cliente y el automóvil reservado */
@@ -780,34 +806,61 @@ db.getCollection("cliente").aggregate([
     {
         $lookup: {
             from: "reserva",
-            localField: "_id",
+            localField: "ID_Cliente",
             foreignField: "ID_Cliente_id",
-            as: "FK_reserva"
-        }
-    },
-    {
-        $lookup: {
-            from: "automovil",
-            localField: "FK_reserva.ID_Automovil_id",
-            foreignField: "_id",
-            as: "FK_automovil"
-        }  
-    },
-    {
-        $project: {
-          "FK_reserva._id": 0,
-          "FK_reserva.ID_Cliente_id": 0,
-          "FK_reserva.ID_Automovil_id": 0,
-          "_id": 0,
-          "Email": 0,
-          "FK_automovil._id": 0,
-          "FK_automovil.ID_Automovil": 0,
-          "FK_automovil.Anio": 0
+            pipeline: [
+                {
+                    $lookup: {
+                        from: "automovil",
+                        localField: "ID_Automovil_id",
+                        foreignField: "ID_Automovil",
+                        pipeline: [
+                            {
+                                $project: {
+                                  "_id": 0,
+                                  "id_auto": "$ID_Automovil",
+                                  "marca_automovil": "$Marca",
+                                  "modelo_automovil": "$Modelo",
+                                  "año_automovil": "$Anio"
+                                }
+                            }
+                        ],
+                        as: "info_automovil"
+                    }  
+                }, 
+                {$unwind: "$info_automovil"},
+                {
+                    $project: {
+                        "_id": 0,
+                        "id_reservacion": "$ID_Reserva",
+                        "estado_reserva": "$Estado",
+                        "fecha_reservacion": "$Fecha_Reserva",
+                        "fecha_inicio_prestamo": "$Fecha_Inicio",
+                        "fecha_fin_prestamo": "$Fecha_Fin",
+                        "info_automovil": "$info_automovil"
+                    }
+                }
+            ],
+            as: "info_reserva",
         }
     },
     {
         $match: {
-          "FK_reserva.Estado": {$eq: "Apartado"}
+          "info_reserva.estado_reserva": {$eq: "Apartado"}
+        }
+    },
+    {$unwind: "$info_reserva"},
+    {
+        $project: {
+          "_id": 0,
+          "id_usuario": "$ID_Cliente",
+          "nombre_cliente": "$Nombre",
+          "apellido_cliente": "$Apellido",
+          "documento": "$DNI",
+          "ubicacion_cliente": "$Direccion",
+          "numero_contacto": "$Telefono",
+          "correo_electronico": "$Email",
+          "info_reserva": "$info_reserva",
         }
     }
 ]);
@@ -848,7 +901,7 @@ db.getCollection("sucursal_automovil").aggregate([
         $lookup: {
           from: "sucursal",
           localField: "ID_Sucursal_id",
-          foreignField: "_id",
+          foreignField: "ID_Sucursal",
           as: "Total"
         }
     },
@@ -888,9 +941,22 @@ db.getCollection("alquiler").aggregate([
 /* 10. Listar los clientes con el DNI específico. */
 
 use("db_campus_alquiler");
-db.getCollection("cliente").aggregate({
-    $match:{"DNI": {$eq: "125356895"}}
-})
+db.getCollection("cliente").aggregate([
+    {
+        $project: {
+          "_id": 0,
+          "id_usuario": "$ID_Cliente",
+          "nombre_cliente": "$Nombre",
+          "apellido_cliente": "$Apellido",
+          "documento": "$DNI",
+          "ubicacion_cliente": "$Direccion",
+          "numero_contacto": "$Telefono",
+          "correo_electronico": "$Email",
+        }
+    },{
+        $match:{"documento": {$eq: "125356895"}}
+    }
+])
 
 /* 11. Mostrar todos los automóviles con una capacidad mayor a 5 personas. */
 
@@ -918,37 +984,46 @@ db.getCollection("alquiler").aggregate(
 use("db_campus_alquiler");
 db.getCollection("cliente").aggregate([
     {
-        $project: {
-          ID_Cliente: 1,
-          NombreCliente: { $concat: ["$Nombre", " " , "$Apellido"] },
-        }
-    },
-    {
         $lookup: {
           from: "reserva",
-          localField: "_id",
+          localField: "ID_Cliente",
           foreignField: "ID_Cliente_id",
-          as: "reservas"
+          pipeline: [
+            {
+                $match: {
+                    "Estado": {$eq: "Apartado"}
+                  }               
+            },
+            {
+                $project: {
+                    "_id": 0,
+                    "id_reservacion": "$ID_Reserva",
+                    "estado_reserva": "$Estado",
+                    "fecha_reservacion": "$Fecha_Reserva",
+                    "fecha_inicio_prestamo": "$Fecha_Inicio",
+                    "fecha_fin_prestamo": "$Fecha_Fin",
+                }
+            }
+          ],
+          as: "informacion_reservas"
         }
     },
     {
         $project: {
-            _id: 0, 
-            "reservas._id": 0,
-            "reservas.ID_Cliente_id": 0,
-            "reservas.ID_Automovil_id": 0,
-            "reservas.Fecha_Inicio": 0,
-            "reservas.Fecha_Fin": 0,
+            "_id": 0, 
+            "id_usuario": "$ID_Cliente",
+            "nombre_cliente": "$Nombre",
+            "apellido_cliente": "$Apellido",
+            "documento": "$DNI",
+            "ubicacion_cliente": "$Direccion",
+            "numero_contacto": "$Telefono",
+            "correo_electronico": "$Email",
+            "informacion_reservas": "$informacion_reservas"
         }
     },
     {
         $match: {
-          "reservas.Estado": {$eq: "Apartado"}
-        }
-    },
-    {
-        $match: {
-          ID_Cliente: {$eq: 4}
+          "id_usuario": {$eq: 4}
         }
     }
 ]);
@@ -966,44 +1041,68 @@ db.empleado.find(
 
 use("db_campus_alquiler");
 db.getCollection("cliente").aggregate([
-    {
-        $project: {
-            nombreCompleto : { $concat: ["$Nombre", " ", "$Apellido"]},
-            DNI: 1,
-            Direccion : 1,
-
-        }
-    },
+   
     {
         $lookup: {
           from: "alquiler",
-          localField: "_id",
+          localField: "ID_Cliente",
           foreignField: "ID_Cliente_id",
+          pipeline: [
+            {
+                $lookup: {
+                    from: "registro_devolucion",
+                    localField: "ID_Alquiler",
+                    foreignField: "ID_Alquiler_id",
+                    pipeline: [
+                        {
+                            $project: {
+                              "_id": 0,
+                              "id_registro_devolucion": "$ID_Registro",
+                              "fecha_entrega": "$Fecha_Devolucion",
+                              "combustible_retornado": "$Combustible_Devuelto",
+                              "kilometraje_final": "$Kilometraje_Devuelto",
+                            }
+                        },
+                    ],
+                    as: "info_devolucion"
+                  }
+            },
+            {
+                $match: {
+                  "info_devolucion": {
+                    $ne: []
+                  }
+                }
+            },{$unwind : "$info_devolucion"},
+            {
+                $project: {
+                    "_id": 0,
+                    "id_alquiler": "$ID_Alquiler",
+                    "estado_alquiler": "$Estado",
+                    "inicio_alquiler": "$Fecha_Inicio",
+                    "fin_alquiler": "$Fecha_Fin",
+                    "costo_alquiler": "$Costo_Total",
+                    "info_devolucion": "$info_devolucion"
+                }
+            }
+          ],
           as: "alquileres" 
         }
     },
     {
-        $lookup: {
-          from: "registro_devolucion",
-          localField: "_id",
-          foreignField: "ID_Alquiler_id",
-          as: "devoluciones"
-        }
-    },
-    {
-        $project: {
-          "alquileres": 0,
-          "devoluciones._id": 0
-        }
-    },
-    {
         $match: {
-          "devoluciones": {
+          "alquileres": {
             $ne: []
           }
         }
+    }, 
+    {
+        $project: {
+           
+            "alquileres": "$alquileres"
+        }
     }
-])
+]);
 
 /* 16. Listar todos los automóviles ordenados por marca y modelo. */
 
