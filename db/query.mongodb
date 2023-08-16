@@ -749,11 +749,32 @@ db.empleado.insertMany([
 
 /* 2. Mostrar todos los clientes registrados en la base de datos. */
 use("db_campus_alquiler");
-db.cliente.find();
+db.cliente.aggregate({$project:{
+    "_id": 0,
+    "id": "$ID_Cliente",
+    "nombre_cliente": "$Nombre",
+    "apellido_cliente": "$Apellido",
+    "documento": "$DNI",
+    "ubicacion_cliente": "$Direccion",
+    "numero_contacto": "$Telefono",
+}});
 
 /* 3. Obtener todos los automóviles disponibles para alquiler */
 use("db_campus_alquiler");
-db.automovil.find();
+db.automovil.aggregate([
+    {
+        $project: {
+          "_id": 0,
+          "id_auto": "$ID_Automovil",
+          "marca_auto": "$Marca",
+          "modelo_auto": "$Modelo",
+          "año_auto": "$Anio",
+          "tipo_auto": "$Tipo",
+          "capacidad_auto": "$Capacidad",
+          "costo_dia": "$Precio_Diario",
+        }
+    }
+]);
 
 /* 4. Listar todos los alquileres activos junto con los datos de los
 clientes relacionados. */
@@ -961,11 +982,14 @@ db.getCollection("cliente").aggregate([
 /* 11. Mostrar todos los automóviles con una capacidad mayor a 5 personas. */
 
 use("db_campus_alquiler");
-db.getCollection("automovil").aggregate({
-    $match: {
-        "Capacidad": {$gt :5}
+db.getCollection("automovil").aggregate([
+    {
+        $match: {
+            "Capacidad": {$gt :5}
+        }
     }
-});
+]
+);
 
 /* 12. Obtener los detalles del alquiler que tiene fecha de inicio en
 '2023-07-05' */
@@ -1108,28 +1132,36 @@ db.getCollection("cliente").aggregate([
 
 use("db_campus_alquiler");
 db.getCollection("automovil").aggregate([
-    { $match: { Tipo: "Automovil" } },
-
+    { $match: { Tipo: "Automovil" } }, 
     {
         $project: {
-          "_id": 0
+            "_id": 0,
+            "id_auto": "$ID_Automovil" ,
+            "Marca": "$Marca",
+            "modelo_auto": "$Modelo",
+            "año_modelo": "$Anio",
+            "tipo_automovil": "$Tipo",
+            "capacidad_auto": "$Capacidad",
+            "precio_dia": "$Precio_Diario"
         }
-    },  
+    },
     {
         $group: {
           _id: "$Marca",
           automoviles: {
-            $push: "$$ROOT"
+          $push: "$$ROOT"
           }
         }
     },
     {
         $project: {
-          "Marca": 0,
+            "_id": 0,
+            "marca_auto": "$_id",
+            "automoviles": "$automoviles",
+            
         }
-    },
-    { $sort: { _id: 1} },
-  ]);
+    }
+]);
   
 /* 17. Mostrar la cantidad total de automóviles en cada sucursal junto con su dirección. */
 
@@ -1182,16 +1214,35 @@ db.getCollection("automovil").aggregate([
           from: "sucursal_automovil",
           localField: "ID_Automovil",
           foreignField: "ID_Automovil_id",
-          as: "cantidad"
+          pipeline: [
+            {
+                $project: {
+                  "_id": 0,
+                  "ID_Sucursal_id": 0,
+                  "ID_Automovil_id":0 ,        
+                }
+            },
+            {
+                $project: {
+                    "unidades_disponibles": "$Cantidad_Disponible" 
+                }
+            }
+          ],
+          as: "detalles"
         }
     }, {
-        $unwind: "$disponibilidad"
-    },
-    {
+        $unwind: "$detalles"
+    }, {
         $project: {
-          "cantidad._id": 0,
-          "cantidad.ID_Sucursal_id": 0,
-          "cantidad.ID_Automovil_id": 0 
+            "_id": 0,
+            "id_auto": "$ID_Automovil" ,
+            "Marca": "$Marca",
+            "modelo_auto": "$Modelo",
+            "año_modelo": "$Anio",
+            "tipo_automovil": "$Tipo",
+            "capacidad_auto": "$Capacidad",
+            "precio_dia": "$Precio_Diario",
+            "Disponibilidad": "$detalles"
         }
     }
 ]);
