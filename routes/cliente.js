@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { configGET } from "../middleware/limit.js";
 import expressQueryBoolean from 'express-query-boolean';
-import { appMiddlewareClienteVerify, appDTOData, appDTOParam, appDATAGET } from "../middleware/cliente.js";
+import { appMiddlewareClienteVerify, appDTOData, appDTOParam } from "../middleware/cliente.js";
 import { conexion } from "../db/atlas.js";
 const appCliente = Router();
 
@@ -11,10 +11,22 @@ let cliente = db.collection("cliente");
 appCliente.use(expressQueryBoolean());
 const getClienteById = (id)=>{
     return new Promise(async(resolve)=>{
-        let result = await cliente.find({ "ID_Cliente": parseInt(id)}).toArray();
-        let transform = await appDATAGET(result);
-        console.log(transform, "transform");
-        resolve(transform);
+        let result = await cliente.aggregate(
+            [
+                {
+                    $project:{
+                        "_id": 0,
+                        "id": "$ID_Cliente",
+                        "nombre_cliente": "$Nombre",
+                        "apellido_cliente": "$Apellido",
+                        "documento": "$DNI",
+                        "ubicacion_cliente": "$Direccion",
+                        "numero_contacto": "$Telefono",
+                    }
+                },
+                { $match: { "id": parseInt(id) }}
+            ]).toArray();
+        resolve(result);
     })
 };
 const getClienteByDocument = (documento)=>{
@@ -29,8 +41,7 @@ const getClienteByDocument = (documento)=>{
                   "documento": "$DNI",
                   "ubicacion_cliente": "$Direccion",
                   "numero_contacto": "$Telefono",
-                  "correo_electronico": "$Email",
-                  "info_reserva": "$info_reserva",
+                  "correo_electronico": "$Email"
                 }
             },{
                 $match:{"documento": {$eq: parseInt(documento)}}
@@ -91,7 +102,18 @@ const getClientesByIdPendientes = (idPendientes)=>{
 }
 const getAllCientes = ()=>{
     return new Promise(async(resolve)=>{
-        let result = await cliente.find({}).toArray();
+        let result = await cliente.aggregate(
+            {
+                $project:{
+                    "_id": 0,
+                    "id": "$ID_Cliente",
+                    "nombre_cliente": "$Nombre",
+                    "apellido_cliente": "$Apellido",
+                    "documento": "$DNI",
+                    "ubicacion_cliente": "$Direccion",
+                    "numero_contacto": "$Telefono",
+                }
+            }).toArray();
         resolve(result);
     })
 };
