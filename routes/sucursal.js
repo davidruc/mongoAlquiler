@@ -24,6 +24,7 @@ const getSucursalesById = (id)=>{
         resolve(result);
     })
 };
+
 const getAllSucursales = ()=>{
     return new Promise(async(resolve)=>{
         let result = await sucursal.aggregate([

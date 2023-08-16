@@ -894,6 +894,16 @@ db.getCollection("alquiler").aggregate([
         $match: {
           "ID_Alquiler": 3
         }
+    },
+    {
+        $project: {
+          "_id": 0,
+          "id_alquiler": "$ID_Alquiler",
+          "inicio_alquiler": "$Fecha_Inicio",
+          "fin_alquiler": "$Fecha_Fin",
+          "costo_final": "$Costo_Total",
+          "estado_alquiler": "$Estado",
+        }
     }
 ])
 
@@ -936,7 +946,7 @@ db.getCollection("sucursal_automovil").aggregate([
             $sum: "$Cantidad_Disponible"
           }
         }
-    }
+    },
 ]);
 
 /* 9 Obtener el costo total de un alquiler específico. */
@@ -945,16 +955,15 @@ use("db_campus_alquiler");
 db.getCollection("alquiler").aggregate([
     {
         $project: {
-          _id: 0,
-          ID_Automovil_id: 0,
-          Fecha_Inicio:0,
-          Fecha_Fin: 0,
-          Estado: 0
+          "_id": 0,
+          "id_alquier": "$ID_Alquiler",
+          "id_cliente": "$ID_Cliente_id",
+          "costo_final": "$Costo_Total"
         }
     },
     {
         $match: {
-            "ID_Alquiler": {$eq: 2}
+            "id_alquier": {$eq: 2}
         }
     }
 ]);
@@ -998,7 +1007,7 @@ use("db_campus_alquiler");
 db.getCollection("alquiler").aggregate(
     {
         $match: {
-            "Fecha_Inicio": {$eq:"2023-07-05"}
+            "Fecha_Inicio.date": {$eq:"2024-02-15"}
         }
     }
 );
@@ -1055,11 +1064,24 @@ db.getCollection("cliente").aggregate([
 /* 14. Mostrar los empleados con cargo de "Gerente" o "Asistente". */
 
 use("db_campus_alquiler");
-db.empleado.find(
+db.empleado.aggregate([
     {
-        $or: [{Cargo: "Gerente"}, {Cargo: "Asistente"}]
+        $match: {
+            $or: [{Cargo: "Gerente"}, {Cargo: "Asistente"}]
+        }
+    },
+    {
+        $project: {
+            "_id": 0,
+            "id_empleado": "$ID_Empleado",
+            "nombre_empleado": "$Nombre",
+            "documento_identidad": "$DNI",
+            "direccion_residencia": "$Direccion",
+            "numero_contacto": "$Telefono",
+            "cargo_empleado": "$Cargo"
+        }
     }
-);
+]);
 
 /* 15. Obtener los datos de los clientes que realizaron al menos un alquiler.  */
 
@@ -1170,7 +1192,7 @@ db.getCollection("sucursal").aggregate([
     {
         $lookup: {
           from: "sucursal_automovil",
-          localField: "_id",
+          localField: "ID_Sucursal",
           foreignField: "ID_Sucursal_id",
           as: "autos"
         }
@@ -1184,8 +1206,16 @@ db.getCollection("sucursal").aggregate([
             $sum: "$autos.Cantidad_Disponible"
           }
         }
+    },
+    {
+        $project: {
+          "_id": 0,
+          "sucursal": "$_id",
+          "direccion": "$direccion",
+          "cantidad_automoviles": "$CantidadAutos"
+        }
     }
-])
+]);
 
 /* 18.Obtener la cantidad total de alquileres registrados en la base de datos.  */
 
@@ -1249,9 +1279,6 @@ db.getCollection("automovil").aggregate([
 
 /* 20.Obtener los datos del cliente que realizó la reserva con reserva_id especifico*/
 
-
-
-/* Arreglar para que venga desde cliente y no reservas */
 use("db_campus_alquiler");
 db.reserva.aggregate([{
         $match: {
@@ -1262,41 +1289,30 @@ db.reserva.aggregate([{
         $lookup: {
             from: "cliente",
             localField: "ID_Cliente_id",
-            foreignField: "_id",
-            as: "cliente_FK"
+            foreignField: "ID_Cliente",
+            pipeline: [
+                {
+                    $project: {
+                      "_id": 0,
+                      "id_cliente":"$ID_Cliente",
+                      "nombre_cliente":"$Nombre",
+                      "apellido_cliente":"$Apellido",
+                      "documento":"$DNI",
+                      "ubicacion":"$Direccion",
+                      "contacto":"$Telefono",
+                      "correo":"$Email"
+                    }
+                }
+            ],
+            as: "info_cliente"
         }
     },
     {
         $project: {
-            "ID_Automovil_id": 0,
-            "Fecha_Reserva":0,
-            "Fecha_Inicio":0,
-            "Fecha_Fin":0
-        }
-    },
-    {
-        $group: {
-            _id: "$_id",
-            ID_Reserva: {
-                $first: "$ID_Reserva"
-            },
-            ID_Cliente_id: {
-                $first: "$ID_Cliente_id"
-            },
-            Estado: {
-                $first: "$Estado"
-            },
-            cliente_FK: {
-                $push: "$cliente_FK"
-            },
-        }
-    },
-    {
-        $project: {
-            "_id":0,
-            "ID_Cliente_id":0,
-            "cliente_FK._id": 0,
-            "Fecha_Reserva":0
+            "_id": 0,
+            "id_reserva": "$ID_Reserva",
+            "estado":"$Estado",
+            "info_cliente": "$info_cliente"
         }
     }
 ]);
@@ -1304,8 +1320,8 @@ db.reserva.aggregate([{
 /* 21.Listar los alquileres con fecha de inicio entre '2023-07-05' y '2023-07-10'. */
 use("db_campus_alquiler");
 db.alquiler.find({
-    Fecha_Inicio: {
+    "Fecha_Inicio.$date": {
         $gte: "2023-08-11",
-        $lte: "2023-09-11"
+        $lte: "2025-09-11"
     }
 });
