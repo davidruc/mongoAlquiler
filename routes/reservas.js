@@ -10,11 +10,17 @@ let reservas = db.collection("reserva");
 const getReservasById = (id)=>{
     return new Promise(async(resolve)=>{
         let result = await reservas.aggregate([
-            { $match: { "": parseInt(id)}},
+            { $match: { "ID_Reserva": parseInt(id)}},
             {
                 $project: {
-                 "_id": 0,
-                 
+                    "_id": 0,
+                    "id_alquiler": "$ID_Reserva",
+                    "id_cliente": "$ID_Cliente_id",
+                    "id_automovil": "$ID_Automovil_id",
+                    "fecha_reservacion": "$Fecha_Reserva",
+                    "inicio_alquiler": "$Fecha_Inicio",
+                    "fin_alquiler": "$Fecha_Fin",
+                    "estado_reserva": "$Estado",
                 }
             }
         ]).toArray();
@@ -68,7 +74,14 @@ const getAllReservas = ()=>{
             {
                 $project: {
                     "_id": 0,
-                    
+                    "id_alquiler": "$ID_Reserva",
+                    "id_cliente": "$ID_Cliente_id",
+                    "id_automovil": "$ID_Automovil_id",
+                    "fecha_reservacion": "$Fecha_Reserva",
+                    "inicio_alquiler": "$Fecha_Inicio",
+                    "fin_alquiler": "$Fecha_Fin",
+                    "estado_reserva": "$Estado",
+
                 }
             }
         ]).toArray();

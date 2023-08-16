@@ -22,8 +22,8 @@ export class Alquiler {
     }
 }
 __decorate([
-    Expose({ name: 'id' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El "id" del alquiler es obligatorio` }; } }),
+    Expose({ name: 'id_alquiler' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "id_alquiler" del alquiler es obligatorio` }; } }),
     __metadata("design:type", Number)
 ], Alquiler.prototype, "ID_Alquiler", void 0);
 __decorate([
@@ -37,18 +37,18 @@ __decorate([
     __metadata("design:type", Number)
 ], Alquiler.prototype, "ID_Automovil_id", void 0);
 __decorate([
-    Expose({ name: "Dia_Inicio" }),
-    IsDefined({ message: () => { throw { status: 422, message: `El "Dia_Inicio" es obligatorio` }; } }),
+    Expose({ name: "inicio_alquiler" }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "inicio_alquiler" es obligatorio` }; } }),
     __metadata("design:type", Date)
 ], Alquiler.prototype, "Fecha_Inicio", void 0);
 __decorate([
-    Expose({ name: "Dia_Fin" }),
-    IsDefined({ message: () => { throw { status: 422, message: `El "Dia_Fin" es obligatorio` }; } }),
+    Expose({ name: "fin_alquiler" }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "fin_alquiler" es obligatorio` }; } }),
     __metadata("design:type", Date)
 ], Alquiler.prototype, "Fecha_Fin", void 0);
 __decorate([
-    Expose({ name: 'costo' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El "costo" del alquiler es obligatorio` }; } }),
+    Expose({ name: 'costo_final' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "costo_final" del alquiler es obligatorio` }; } }),
     __metadata("design:type", Number)
 ], Alquiler.prototype, "Costo_Total", void 0);
 __decorate([

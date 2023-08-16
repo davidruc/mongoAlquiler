@@ -22,8 +22,8 @@ export class Reservas {
     }
 }
 __decorate([
-    Expose({ name: 'id' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El "id" de la devolucion es obligatorio` }; } }),
+    Expose({ name: 'id_alquiler' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "id_alquiler" de la devolucion es obligatorio` }; } }),
     __metadata("design:type", Number)
 ], Reservas.prototype, "ID_Reserva", void 0);
 __decorate([
@@ -37,22 +37,22 @@ __decorate([
     __metadata("design:type", Number)
 ], Reservas.prototype, "ID_Automovil_id", void 0);
 __decorate([
-    Expose({ name: "reserva_fecha" }),
-    IsDefined({ message: () => { throw { status: 422, message: `La "reserva_fecha" es un campo obligatorio` }; } }),
+    Expose({ name: "fecha_reservacion" }),
+    IsDefined({ message: () => { throw { status: 422, message: `La "fecha_reservacion" es un campo obligatorio` }; } }),
     __metadata("design:type", Date)
 ], Reservas.prototype, "Fecha_Reserva", void 0);
 __decorate([
-    Expose({ name: "inicio_fecha" }),
-    IsDefined({ message: () => { throw { status: 422, message: `La "inicio_fecha" es un campo obligatorio` }; } }),
+    Expose({ name: "inicio_alquiler" }),
+    IsDefined({ message: () => { throw { status: 422, message: `La "inicio_alquiler" es un campo obligatorio` }; } }),
     __metadata("design:type", Date)
 ], Reservas.prototype, "Fecha_Inicio", void 0);
 __decorate([
-    Expose({ name: "fin_fecha" }),
-    IsDefined({ message: () => { throw { status: 422, message: `La "fin_fecha" es un campo obligatorio` }; } }),
+    Expose({ name: "fin_alquiler" }),
+    IsDefined({ message: () => { throw { status: 422, message: `La "fin_alquiler" es un campo obligatorio` }; } }),
     __metadata("design:type", Date)
 ], Reservas.prototype, "Fecha_Fin", void 0);
 __decorate([
-    Expose({ name: 'combustible_retornado' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El "combustible_retornado" del alquiler es obligatorio` }; } }),
+    Expose({ name: 'estado_reserva' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "estado_reserva" del alquiler es obligatorio` }; } }),
     __metadata("design:type", String)
 ], Reservas.prototype, "Estado", void 0);

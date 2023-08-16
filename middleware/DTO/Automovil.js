@@ -22,37 +22,37 @@ export class Automovil {
     }
 }
 __decorate([
-    Expose({ name: 'id' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El id del automovil es obligatorio` }; } }),
+    Expose({ name: 'id_auto' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "id_auto" del automovil es obligatorio` }; } }),
     __metadata("design:type", Number)
 ], Automovil.prototype, "ID_Automovil", void 0);
 __decorate([
-    Expose({ name: 'marca_automovil' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El marca_automovil del automovil es obligatorio` }; } }),
+    Expose({ name: 'marca_auto' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "marca_auto" del automovil es obligatorio` }; } }),
     __metadata("design:type", String)
 ], Automovil.prototype, "Marca", void 0);
 __decorate([
-    Expose({ name: 'modelo_automovil' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El modelo_automovil del automovil es obligatorio` }; } }),
+    Expose({ name: 'modelo_auto' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "modelo_auto" del automovil es obligatorio` }; } }),
     __metadata("design:type", String)
 ], Automovil.prototype, "Modelo", void 0);
 __decorate([
-    Expose({ name: 'year' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El año del automovil es obligatorio` }; } }),
+    Expose({ name: 'year_auto' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "year_auto" del automovil es obligatorio` }; } }),
     __metadata("design:type", Number)
 ], Automovil.prototype, "Anio", void 0);
 __decorate([
-    Expose({ name: 'tipo' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El tipo del automovil es obligatorio` }; } }),
+    Expose({ name: 'tipo_auto' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "tipo_auto" del automovil es obligatorio` }; } }),
     __metadata("design:type", String)
 ], Automovil.prototype, "Tipo", void 0);
 __decorate([
-    Expose({ name: 'cupo' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El cupo del automovil es obligatorio` }; } }),
+    Expose({ name: 'capacidad_auto' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "capacidad_auto" del automovil es obligatorio` }; } }),
     __metadata("design:type", Number)
 ], Automovil.prototype, "Capacidad", void 0);
 __decorate([
-    Expose({ name: 'valor_dia' }),
-    IsDefined({ message: () => { throw { status: 422, message: `El valor_dia del automovil es obligatorio` }; } }),
+    Expose({ name: 'costo_dia' }),
+    IsDefined({ message: () => { throw { status: 422, message: `El "costo_dia" del automovil es obligatorio` }; } }),
     __metadata("design:type", Number)
 ], Automovil.prototype, "Precio_Diario", void 0);

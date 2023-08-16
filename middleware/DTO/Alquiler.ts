@@ -2,8 +2,8 @@ import { Expose, Transform } from "class-transformer";
 import { IsDefined } from "class-validator";
 
 export class Alquiler {
-    @Expose({ name: 'id' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El "id" del alquiler es obligatorio`}}})
+    @Expose({ name: 'id_alquiler' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "id_alquiler" del alquiler es obligatorio`}}})
     ID_Alquiler: number;
     @Expose({ name: 'id_cliente' })
     @IsDefined({message: ()=>{ throw {status: 422, message: `El "id_cliente" es obligatorio`}}})
@@ -11,14 +11,14 @@ export class Alquiler {
     @Expose({ name: 'id_automovil' })
     @IsDefined({message: ()=>{ throw {status: 422, message: `El "id_automovil" es obligatorio`}}})
     ID_Automovil_id: number;
-    @Expose({name: "Dia_Inicio"})
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El "Dia_Inicio" es obligatorio`}}})
+    @Expose({name: "inicio_alquiler"})
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "inicio_alquiler" es obligatorio`}}})
     Fecha_Inicio: Date;
-    @Expose({name: "Dia_Fin"})
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El "Dia_Fin" es obligatorio`}}})
+    @Expose({name: "fin_alquiler"})
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "fin_alquiler" es obligatorio`}}})
     Fecha_Fin: Date;
-    @Expose({ name: 'costo' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El "costo" del alquiler es obligatorio`}}})
+    @Expose({ name: 'costo_final' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "costo_final" del alquiler es obligatorio`}}})
     Costo_Total: number;
     @Expose({ name: 'estado_alquiler' })
     @IsDefined({message: ()=>{ throw {status: 422, message: `El "estado_alquiler" es obligatorio`}}})

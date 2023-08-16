@@ -2,26 +2,26 @@ import { Expose, Transform } from "class-transformer";
 import { IsDefined } from "class-validator";
 
 export class Automovil {
-    @Expose({ name: 'id' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El id del automovil es obligatorio`}}})
+    @Expose({ name: 'id_auto' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "id_auto" del automovil es obligatorio`}}})
     ID_Automovil: number;
-    @Expose({ name: 'marca_automovil' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El marca_automovil del automovil es obligatorio`}}})
+    @Expose({ name: 'marca_auto' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "marca_auto" del automovil es obligatorio`}}})
     Marca: string;
-    @Expose({ name: 'modelo_automovil' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El modelo_automovil del automovil es obligatorio`}}})
+    @Expose({ name: 'modelo_auto' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "modelo_auto" del automovil es obligatorio`}}})
     Modelo: string;
-    @Expose({ name: 'year' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El año del automovil es obligatorio`}}})
+    @Expose({ name: 'year_auto' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "year_auto" del automovil es obligatorio`}}})
     Anio: number;
-    @Expose({ name: 'tipo' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El tipo del automovil es obligatorio`}}})
+    @Expose({ name: 'tipo_auto' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "tipo_auto" del automovil es obligatorio`}}})
     Tipo: string;
-    @Expose({ name: 'cupo' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El cupo del automovil es obligatorio`}}})
+    @Expose({ name: 'capacidad_auto' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "capacidad_auto" del automovil es obligatorio`}}})
     Capacidad: number;
-    @Expose({ name: 'valor_dia' })
-    @IsDefined({message: ()=>{ throw {status: 422, message: `El valor_dia del automovil es obligatorio`}}})
+    @Expose({ name: 'costo_dia' })
+    @IsDefined({message: ()=>{ throw {status: 422, message: `El "costo_dia" del automovil es obligatorio`}}})
     Precio_Diario: number;
     constructor(data: Partial<Automovil>){
         Object.assign(this , data);
