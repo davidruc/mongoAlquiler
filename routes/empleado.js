@@ -7,13 +7,108 @@ const appEmpleado = Router();
 let db = await conexion();
 let empleado = db.collection("empleado");
 
-appEmpleado.get("/:id?", configGET(),appMiddlewareEmpleadoVerify, appDTOParam, async(req, res)=>{
+
+const getEmpleadoById = (id)=>{
+    return new Promise(async(resolve)=>{
+        let result = await empleado.aggregate([
+            { $match: { "ID_Empleado": parseInt(id)}},
+            {
+                $project: {
+                  "_id": 0,
+                  "id_empleado": "$ID_Empleado",
+                  "nombre_empleado": "$Nombre",
+                  "documento_identidad": "$DNI",
+                  "direccion_residencia": "$Direccion",
+                  "numero_contacto": "$Telefono",
+                  "cargo_empleado": "$Cargo"
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+const getAllEmpleados = ()=>{
+    return new Promise(async(resolve)=>{
+        let result = await empleado.aggregate([
+            {
+                $project: {
+                    "_id": 0,
+                    "id_empleado": "$ID_Empleado",
+                    "nombre_empleado": "$Nombre",
+                    "documento_identidad": "$DNI",
+                    "direccion_residencia": "$Direccion",
+                    "numero_contacto": "$Telefono",
+                    "cargo_empleado": "$Cargo"
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+appEmpleado.get("/", configGET(),appMiddlewareEmpleadoVerify, async(req, res)=>{
     if(!req.rateLimit) return;
-    let result = (!req.params.id)     
-    ? await empleado.find({}).toArray()
-    : await empleado.find({ "ID_empleado": parseInt(req.params.id)}).toArray();
+    try{
+        const {id} = req.query;
+        if(id){
+            const data = await getEmpleadoById(id);
+            res.send(data);
+        } else {
+            const data = await getAllEmpleados();
+            res.send(data);
+        }
+    }
+    catch(err){
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+    }
+});
+
+appEmpleado.get("/vendedor", configGET(),appMiddlewareEmpleadoVerify, async(req, res)=>{
+    if(!req.rateLimit) return;
+    let result = await empleado.aggregate([
+        {
+            $match: {
+              "Cargo": "Agente de Entrega"
+            }
+        },
+        {
+            $project: {
+                "_id": 0,
+                "id_empleado": "$ID_Empleado",
+                "nombre_empleado": "$Nombre",
+                "documento_identidad": "$DNI",
+                "direccion_residencia": "$Direccion",
+                "numero_contacto": "$Telefono",
+                "cargo_empleado": "$Cargo"
+            }
+        }
+    ]).toArray();
     res.send(result);
-})
+});
+
+appEmpleado.get("/gerente_asistente", configGET(),appMiddlewareEmpleadoVerify, async(req, res)=>{
+    if(!req.rateLimit) return;
+    let result = await empleado.aggregate([
+        {
+            $match: {
+                $or: [{Cargo: "Gerente"}, {Cargo: "Asistente"}]
+            }
+        },
+        {
+            $project: {
+                "_id": 0,
+                "id_empleado": "$ID_Empleado",
+                "nombre_empleado": "$Nombre",
+                "documento_identidad": "$DNI",
+                "direccion_residencia": "$Direccion",
+                "numero_contacto": "$Telefono",
+                "cargo_empleado": "$Cargo"
+            }
+        }
+    ]).toArray();
+    res.send(result);
+});
+
 appEmpleado.post("/", configGET(), appMiddlewareEmpleadoVerify, appDTOData, async(req, res)=>{
     if(!req.rateLimit) return;
     try{
