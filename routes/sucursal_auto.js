@@ -7,13 +7,81 @@ const appSucursalxAuto = Router();
 let db = await conexion();
 let sucursal_Auto = db.collection("sucursal_automovil");
 
-appSucursalxAuto.get("/:id?", configGET(),appMiddlewareSucursalxAutoVerify, appDTOParam, async(req, res)=>{
+const getSucursalesById = (id)=>{
+    return new Promise(async(resolve)=>{
+        let result = await sucursal_Auto.aggregate([
+            { $match: { "ID_Sucursal_id": parseInt(id)}},
+            {
+                $project: {
+                 "_id": 0,
+                 "id_sucursal": "$ID_Sucursal_id",
+                 "id_auto": "$ID_Automovil_id",
+                 "cantidad_disponible": "$Cantidad_Disponible",
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+const getAllSucursales = ()=>{
+    return new Promise(async(resolve)=>{
+        let result = await sucursal_Auto.aggregate([
+            {
+                $project: {
+                    "_id": 0,
+                    "id_sucursal": "$ID_Sucursal_id",
+                    "id_auto": "$ID_Automovil_id",
+                    "cantidad_disponible": "$Cantidad_Disponible"
+                }
+            }
+        ]).toArray();
+        resolve(result);
+    })
+};
+appSucursalxAuto.get("/", configGET(),appMiddlewareSucursalxAutoVerify, async(req, res)=>{
     if(!req.rateLimit) return;
-    let result = (!req.params.id)     
-    ? await sucursal_Auto.find({}).toArray()
-    : await sucursal_Auto.find({ "ID_Sucursal_id": parseInt(req.params.id)}).toArray();
+    try{
+        const {id} = req.query;
+        if(id){
+            const data = await getSucursalesById(id);
+            res.send(data);
+        } else {
+            const data = await getAllSucursales();
+            res.send(data);
+        }
+    }
+    catch(err){
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+    }
+});
+
+appSucursalxAuto.get("/totalAutos", configGET(),appMiddlewareSucursalxAutoVerify, async(req, res)=>{
+    if(!req.rateLimit) return;
+    let result = await sucursal_Auto.aggregate([
+        {
+            $lookup: {
+              from: "sucursal",
+              localField: "ID_Sucursal_id",
+              foreignField: "ID_Sucursal",
+              as: "Total"
+            }
+        },
+        
+        {$unwind: "$Total" },
+        {
+            $group: {
+              _id: "$Total.ID_Sucursal",
+              sucursal: {$first: "$Total.Nombre"},
+              totalAutos: {
+                $sum: "$Cantidad_Disponible"
+              }
+            }
+        },
+    ]).toArray();
     res.send(result);
-})
+});
+
 appSucursalxAuto.post("/", configGET(), appMiddlewareSucursalxAutoVerify, appDTOData, async(req, res)=>{
     if(!req.rateLimit) return;
     try{
