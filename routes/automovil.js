@@ -139,13 +139,7 @@ appAutomovil.get("/autos_grandes_disponibles", configGET(), appMiddlewareAutomov
               pipeline: [
                 {
                     $project: {
-                      "_id": 0,
-                      "ID_Sucursal_id": 0,
-                      "ID_Automovil_id":0 ,        
-                    }
-                },
-                {
-                    $project: {
+                        "_id": 0,
                         "unidades_disponibles": "$Cantidad_Disponible" 
                     }
                 }
