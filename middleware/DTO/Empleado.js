@@ -52,7 +52,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Empleado.prototype, "Telefono", void 0);
 __decorate([
-    Expose({ name: 'email' }),
+    Expose({ name: 'cargo' }),
     IsDefined({ message: () => { throw { status: 422, message: `El telefono de "contacto" del empleado es obligatorio` }; } }),
     __metadata("design:type", String)
 ], Empleado.prototype, "Cargo", void 0);

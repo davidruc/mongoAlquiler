@@ -29,17 +29,61 @@ const getReservasById = (id)=>{
 };
 const getClientesReservasById = (idReserva)=>{
     return new Promise(async(resolve)=>{
-        let result = await reservas.aggregate([{
-            $match: {
-                ID_Reserva: parseInt(idReserva)
-            }
-        },
+        let result = await reservas.aggregate([
         {
             $lookup: {
                 from: "cliente",
                 localField: "ID_Cliente_id",
                 foreignField: "ID_Cliente",
                 pipeline: [
+                    {
+                        $match: {
+                            ID_Cliente: parseInt(idReserva)
+                        }
+                    },
+                    {
+                        $project: {
+                          "_id": 0,
+                          "id_cliente":"$ID_Cliente",
+                          "nombre_cliente":"$Nombre",
+                          "apellido_cliente":"$Apellido",
+                          "documento":"$DNI",
+                          "ubicacion":"$Direccion",
+                          "contacto":"$Telefono",
+                          "correo":"$Email"
+                        }
+                    }
+                ],
+                as: "info_cliente"
+            }
+        },
+        {
+            $project: {
+                "_id": 0,
+                "id_reserva": "$ID_Reserva",
+                "estado":"$Estado",
+                "info_cliente": "$info_cliente"
+            }
+        }
+    ]).toArray();
+        resolve(result);
+    })
+};
+const getClientesReservasEspById = (idReservaEsp)=>{
+    return new Promise(async(resolve)=>{
+        let result = await reservas.aggregate([
+            {
+                $match: {
+                    ID_Reserva: parseInt(idReservaEsp)
+                }
+            },
+        {
+            $lookup: {
+                from: "cliente",
+                localField: "ID_Cliente_id",
+                foreignField: "ID_Cliente",
+                pipeline: [
+                    
                     {
                         $project: {
                           "_id": 0,
@@ -91,12 +135,15 @@ const getAllReservas = ()=>{
 appReservas.get("/", configGET(),appMiddlewareReservaVerify, async(req, res)=>{
     if(!req.rateLimit) return;
     try{
-        const {id, idReserva} = req.query;
+        const {id, idReserva, idReservaEsp} = req.query;
         if(id){
             const data = await getReservasById(id);
             res.send(data);
         } else if(idReserva){
             const data = await getClientesReservasById(idReserva);
+            res.send(data);
+        } else if(idReservaEsp){
+            const data = await getClientesReservasEspById(idReservaEsp);
             res.send(data);
         }
         else {

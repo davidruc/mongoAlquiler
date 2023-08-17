@@ -20,7 +20,7 @@ export class Empleado {
     @Expose({ name: 'contacto' })
     @IsDefined({message: ()=>{ throw {status: 422, message: `El telefono de "contacto" del empleado es obligatorio`}}})
     Telefono: number;
-    @Expose({ name: 'email' })
+    @Expose({ name: 'cargo' })
     @IsDefined({message: ()=>{ throw {status: 422, message: `El telefono de "contacto" del empleado es obligatorio`}}})
     Cargo: string;
     constructor(data: Partial<Empleado>){
