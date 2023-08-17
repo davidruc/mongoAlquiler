@@ -1,0 +1,345 @@
+/* insertar datos de prueba */
+use("db_campus_alquiler");
+db.sucursal.insertOne(
+    {
+        ID_Sucursal: 3,
+        Nombre: "medallo papa",
+        Direccion: "calle 15# 21",
+        Telefono: 3185767865,
+    }
+);
+db.automovil.insertMany([
+    {
+        ID_Automovil: 1,
+        Marca: "Chevrolet",
+        Modelo: "captiva",
+        Anio: 2021,
+        Tipo:"Automovil",
+        Capacidad: 4,
+        Precio_Diario:140000
+    },
+    {
+        ID_Automovil: 3,
+        Marca: "Kia",
+        Modelo: "picanto",
+        Anio: 2021,
+        Tipo:"Automovil",
+        Capacidad: 4,
+        Precio_Diario:90000
+    },
+    {
+        ID_Automovil: 4,
+        Marca: "Ford",
+        Modelo: "Fiesta",
+        Anio: 2014,
+        Tipo:"Automovil",
+        Capacidad: 6,
+        Precio_Diario:160000
+    },
+    {
+        ID_Automovil: 5,
+        Marca: "Chevrolet",
+        Modelo: "camaro",
+        Anio: 2017,
+        Tipo:"Automovil",
+        Capacidad: 4,
+        Precio_Diario:130000
+    }
+]);
+db.sucursal_automovil.insertMany([
+    {
+        ID_Sucursal_id: 2,
+        ID_Automovil_id: 2,
+        Cantidad_Disponible:9
+    },
+    {
+        ID_Sucursal_id: 3,
+        ID_Automovil_id: 3,
+        Cantidad_Disponible:15
+    },
+    {
+        ID_Sucursal_id: 3,
+        ID_Automovil_id: 4,
+        Cantidad_Disponible:20
+    },
+    {
+        ID_Sucursal_id: 2,
+        ID_Automovil_id: 5,
+        Cantidad_Disponible:4
+    }
+]);
+db.reserva.insertMany([
+    {
+        ID_Reserva: 2,
+        ID_Cliente_id: 2,
+        ID_Automovil_id: 2,
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
+        Estado: "Confirmado"
+    },
+    {
+        ID_Reserva: 3,
+        ID_Cliente_id: 3,
+        ID_Automovil_id: 3,
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
+        Estado: "Confirmado"
+    },
+    {
+        ID_Reserva: 4,
+        ID_Cliente_id: 4,
+        ID_Automovil_id: 4,
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
+        Estado: "Apartado"
+    },
+    {
+        ID_Reserva: 5,
+        ID_Cliente_id: 5,
+        ID_Automovil_id: 5,
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
+        Estado: "Confirmado"
+    },
+    {
+        ID_Reserva: 6,
+        ID_Cliente_id: 4,
+        ID_Automovil_id: 2,
+        Fecha_Reserva:"2023-10-10",
+        Fecha_Inicio: "2023-10-15",
+        Fecha_Fin: "2023-10-20",
+        Estado: "Apartado"
+    }
+]);
+db.cliente.insertMany([
+    {
+        ID_Cliente: 2,
+        Nombre: "cliente2",
+        Apellido:"apellido",
+        DNI:125356895,
+        Direccion:"Calle 11",
+        Telefono:3000000002,
+        Email:"correo@gmail.com"
+    },
+    {
+        ID_Cliente: 3,
+        Nombre: "cliente3",
+        Apellido:"apellido",
+        DNI:125356895,
+        Direccion:"Calle 11",
+        Telefono:3000000002,
+        Email:"correo@gmail.com"
+    },
+    {
+        ID_Cliente: 4,
+        Nombre: "cliente4",
+        Apellido:"apellido",
+        DNI:125356895,
+        Direccion:"Calle 11",
+        Telefono:3000000002,
+        Email:"correo@gmail.com"
+    },
+    {
+        ID_Cliente: 5,
+        Nombre: "cliente5",
+        Apellido:"apellido",
+        DNI:125356895,
+        Direccion:"Calle 11",
+        Telefono:3000000002,
+        Email:"correo@gmail.com"
+    },
+    {
+        ID_Cliente: 6,
+        Nombre: "cliente6",
+        Apellido:"apellido",
+        DNI:125356895,
+        Direccion:"Calle 11",
+        Telefono:3000000002,
+        Email:"correo@gmail.com"
+    }
+]);
+db.alquiler.insertMany([
+    {
+        ID_Alquiler: 2,
+        ID_Cliente_id: 2,
+        ID_Automovil_id: 2,
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
+        Costo_Total: 5100000,
+        Estado: "activo"
+    },
+    {
+        ID_Alquiler: 3,
+        ID_Cliente_id: 3,
+        ID_Automovil_id: 3,
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
+        Costo_Total: 2100000,
+        Estado: "activo"
+    },
+    {
+        ID_Alquiler: 4,
+        ID_Cliente_id: 4,
+        ID_Automovil_id: 4,
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
+        Costo_Total: 900000,
+        Estado: "activo"
+    },
+    {
+        ID_Alquiler: 5,
+        ID_Cliente_id: 5,
+        ID_Automovil_id: 5,
+        Fecha_Inicio: "2023-10-10",
+        Fecha_Fin: "2023-10-16",
+        Costo_Total: 1200000,
+        Estado: "Finalizado"
+    },
+]);
+db.registro_devolucion.insertMany([
+  
+    {
+        ID_Registro: 2,
+        ID_Alquiler_id: 2,
+        ID_Empleado_id: 2,
+        Fecha_Devolucion: "2023-10-10",
+        Combustible_Devuelto: 1.2,
+        Kilometraje_Devuelto: 30000,
+        Monto_Adicional: 10000,
+    },
+    {
+        ID_Registro: 3,
+        ID_Alquiler_id: 3,
+        ID_Empleado_id: 3,
+        Fecha_Devolucion:"2023-10-10",
+        Combustible_Devuelto: 2.2,
+        Kilometraje_Devuelto: 20000
+    },
+    {
+        ID_Registro: 4,
+        ID_Alquiler_id: 4,
+        ID_Empleado_id: 4,
+        Fecha_Devolucion: "2023-10-10",
+        Combustible_Devuelto: 6.2,
+        Kilometraje_Devuelto: 21232
+    },
+    {
+        ID_Registro: 5,
+        ID_Alquiler_id: 5,
+        ID_Empleado_id: 5,
+        Fecha_Devolucion: "2023-10-10",
+        Combustible_Devuelto: 8.2,
+        Kilometraje_Devuelto: 40000
+    }
+]);
+db.resgistro_entrega.insertMany([
+    {
+        ID_Registro: 1,
+        ID_Alquiler_id: 1,
+        ID_Empleado_id: 1,
+        Fecha_Entrega: "2023-10-10",
+        Combustible_Entregado: 5,
+        Kilometraje_Entregado: 19000,
+    },
+    {
+        ID_Registro: 2,
+        ID_Alquiler_id: 2,
+        ID_Empleado_id: 2,
+        Fecha_Entrega: "2023-10-10",
+        Combustible_Entregado: 5,
+        Kilometraje_Entregado: 29532,
+    },
+    {
+        ID_Registro: 3,
+        ID_Alquiler_id: 3,
+        ID_Empleado_id: 3,
+        Fecha_Entrega: "2023-10-10",
+        Combustible_Entregado: 5,
+        Kilometraje_Entregado: 19454,
+    },
+    {
+        ID_Registro: 4,
+        ID_Alquiler_id: 4,
+        ID_Empleado_id: 4,
+        Fecha_Entrega: "2023-10-10",
+        Combustible_Entregado: 5,
+        Kilometraje_Entregado: 20000,
+    },
+    {
+        ID_Registro: 5,
+        ID_Alquiler_id: 5,
+        ID_Empleado_id: 5,
+        Fecha_Entrega: "2023-10-10",
+        Combustible_Entregado: 5,
+        Kilometraje_Entregado: 39643,
+    }
+]);
+db.empleado.insertMany([
+    {
+        ID_Empleado: 1,
+        Nombre: "Empleado1",
+        Apellido: "o",
+        DNI: 645782155,
+        Direccion: "Calle 11",
+        Telefono: 3226589547,
+        Cargo: "Agente de Entrega"
+    },
+    {
+        ID_Empleado: 2,
+        Nombre: "Empleado2",
+        Apellido: "o",
+        DNI: 645782155,
+        Direccion: "Calle 11",
+        Telefono: 3226589547,
+        Cargo: "Agente de Mantenimiento"
+    },
+    {
+        ID_Empleado: 3,
+        Nombre: "Empleado3",
+        Apellido: "o",
+        DNI: 645782155,
+        Direccion: "Calle 12",
+        Telefono: 3226589547,
+        Cargo: "Agente de Entrega"
+    },
+    {
+        ID_Empleado: 4,
+        Nombre: "Empleado4",
+        Apellido: "o",
+        DNI: 645782155,
+        Direccion: "Calle 11",
+        Telefono: 3226589547,
+        Cargo: "Agente de Mantenimiento"
+    },
+    {
+        ID_Empleado: 5,
+        Nombre: "Empleado5",
+        Apellido: "o",
+        DNI: 645782155,
+        Direccion: "Calle 11",
+        Telefono: 3226589547,
+        Cargo: "Agente de Mantenimiento"
+    },
+    {
+        ID_Empleado: 6,
+        Nombre: "Empleado6",
+        Apellido: "o",
+        DNI: 645782155,
+        Direccion: "Calle 11",
+        Telefono: 3226589547,
+        Cargo: "Gerente"
+    },
+    {
+        ID_Empleado: 7,
+        Nombre: "Empleado7",
+        Apellido: "o",
+        DNI: 645782155,
+        Direccion: "Calle 11",
+        Telefono: 3226589547,
+        Cargo: "Asistente"
+    }
+]);
